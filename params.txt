@@ -1,0 +1,104 @@
+global   Draw                   true
+
+global   ResourceName           PXI1::0::0::INSTR
+global   Simulate               false
+global   NumRecords             250
+global   RecordSize             20000 (change this to get the desired waveform length, RecordSize/1e9) (GPM = 100000, PMT = 20000)
+global   SampleRate             1e9 (must stay 1 GS/s)
+global   TimeoutInMS            -1
+global   TriggerDelay           -0.5
+global   DoShaping              false
+global   EdgeDetectThreshold    10
+global   BaselineCalcFraction   0.3
+global   TriggerSigmaThreshold  5
+
+###########################################
+# To set the trigger level and/or offset, 
+# consider the maximum allowed values.
+#
+# Positive slope trigger:
+# 	   Min trig level: offset - range*127/256 + Hysteresis
+# 	   Max trig level: offset + range*126/256
+# Negative slope trigger:
+# 	   Min trig level: offset - range*127/256
+# 	   Max trig level: offset + range*126/256 - Hysteresis
+#
+# Hysteresis:
+#	FSR=5V,		Hysteresis=0.12V,6bit
+# 	FSR=2.5V, 	Hysteresis=0.06V,6bit
+# 	FSR=1V,		Hysteresis=0.03V,8bit
+# 	FSR=0.5V,	Hysteresis=0.016V,8bit
+#	FSR=0.25V,	Hysteresis=0.014V,14bit
+###########################################
+
+1        UseChannel             false
+1        ChannelNickname        Anode1
+1        ChannelPolarity        1
+1        ChannelRange           0.5
+1        ChannelOffset         	0
+1        TriggerLevel           0
+1        TriggerSlope           1    (0=neg, 1=pos)
+1        ActiveTrigger          false
+
+2	 UseChannel		false
+2	 ChannelNickname	Top1
+2	 ChannelPolarity	-1
+2	 ChannelRange		0.5
+2	 ChannelOffset		-0.24
+2	 TriggerLevel		0
+2	 TriggerSlope		1
+2	 ActiveTrigger		false
+
+3	 UseChannel		false
+3	 ChannelNickname	Top2
+3	 ChannelPolarity	-1
+3	 ChannelRange		0.5
+3	 ChannelOffset		-0.24
+3	 TriggerLevel		0.15
+3	 TriggerSlope		1
+3	 ActiveTrigger		false
+
+4	 UseChannel		false
+4	 ChannelNickname	Anode2
+4	 ChannelPolarity	1
+4	 ChannelRange		1.0
+4	 ChannelOffset		-0.4
+4	 TriggerLevel		-0.1
+4	 TriggerSlope		1
+4	 ActiveTrigger		false
+
+5 	 UseChannel		false
+5	 ChannelNickname	ShapedPMT
+5	 ChannelPolarity	1
+5	 ChannelRange		1.0
+5	 ChannelOffset		0.4
+5	 TriggerLevel		0.01
+5	 TriggerSlope		1
+5	 ActiveTrigger		false
+
+6	 UseChannel		true
+6	 ChannelNickname	RawPMT
+6	 ChannelPolarity	1
+6	 ChannelRange		0.5
+6	 ChannelOffset		-0.2
+6	 TriggerLevel		-0.1
+6	 TriggerSlope		0
+6	 ActiveTrigger		true (PMT=true)
+
+7	 UseChannel		false
+7	 ChannelNickname	ShapedA2
+7	 ChannelPolarity	1
+7	 ChannelRange		1
+7	 ChannelOffset		0
+7	 TriggerLevel		-0.39
+7	 TriggerSlope		1
+7	 ActiveTrigger		false (GPM=true)
+
+8	 UseChannel		false
+8	 ChannelNickname	ShapedT2
+8	 ChannelPolarity	1
+8	 ChannelRange		1
+8	 ChannelOffset		0
+8	 TriggerLevel		-0.38
+8	 TriggerSlope		1
+8	 ActiveTrigger		false
