@@ -1,10 +1,10 @@
 #!/bin/bash  
 
-if [ $PWD = "/home/argonshef/LArPurityPMT/WorkDir"];
+if [ $PWD = "/home/argonshef/LArPurityPMT/WorkDir" ];
 then
     echo "Please Run this not fromt the Work Direcory. Create a runx directory in LArPurityPMT"
-    return 0
-done
+    exit 1
+fi
 
 
 for file in *.dat; do

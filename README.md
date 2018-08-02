@@ -4,7 +4,7 @@ Make sure you in a runx directory to run this code.
 
 For questions email: dominic.barker@sheffield.ac.uk
 
-###########################################################################################################
+##########################################################################################
 
 Here is a description of the code in the directory: 
 
@@ -20,14 +20,14 @@ params.txt: Holds the config file for the DAQ.
 
 dataAveraging.cc (run with ./dataAveraging waveforms_in.root fileout.root): Averages over all the events in the file and provides multiple fits. See Lohans Documentation for more detail. 
 
-###########################################################################################################
+##########################################################################################
 
 Updates:
 
 02.08.2018: First GitSetup. Prevously using adhoc DAQ code from the GPM tests. I have added simple scripts to maintain the runs and provide warnings. I have also added timestamps to the data files.  
 
 
-###########################################################################################################
+##########################################################################################
 
 This is the directory that holds the data for the liquid argon PMT study. 
 
