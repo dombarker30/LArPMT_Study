@@ -1,17 +1,17 @@
-global   Draw                   true
+global   Draw                   false
 
 global   ResourceName           PXI1::0::0::INSTR
 global   Simulate               false
-global   NumRecords             10000
-global   RecordSize             100000 (change this to get the desired waveform length, RecordSize/1e9) (GPM = 100000, PMT = 20000)
+global   NumRecords             1000
+global   RecordSize             20000 (change this to get the desired waveform length, RecordSize/1e9) (GPM = 100000, PMT = 20000)
 global   SampleRate             1e9 (must stay 1 GS/s)
 global   TimeoutInMS            -1
-global   TriggerDelay           -0.1
+global   TriggerDelay           -0.5
 global   DoShaping              false
 global   EdgeDetectThreshold    10
 global   BaselineCalcFraction   0.3
 global   TriggerSigmaThreshold  5
-global   IntegrationSize 4000
+
 ###########################################
 # To set the trigger level and/or offset, 
 # consider the maximum allowed values.
@@ -29,6 +29,9 @@ global   IntegrationSize 4000
 # 	FSR=1V,		Hysteresis=0.03V,8bit
 # 	FSR=0.5V,	Hysteresis=0.016V,8bit
 #	FSR=0.25V,	Hysteresis=0.014V,14bit
+
+#The Range is the FSR. 
+
 ###########################################
 
 1        UseChannel             false
@@ -62,7 +65,7 @@ global   IntegrationSize 4000
 4	 ChannelNickname	Anode2
 4	 ChannelPolarity	1
 4	 ChannelRange		1.0
-4	 ChannelOffset		0.47
+4	 ChannelOffset		-0.4
 4	 TriggerLevel		-0.1
 4	 TriggerSlope		1
 4	 ActiveTrigger		false
@@ -71,18 +74,18 @@ global   IntegrationSize 4000
 5	 ChannelNickname	ShapedPMT
 5	 ChannelPolarity	1
 5	 ChannelRange		1.0
-5	 ChannelOffset		-0.4
-5	 TriggerLevel		0.1
+5	 ChannelOffset		0.4
+5	 TriggerLevel		0.01
 5	 TriggerSlope		1
 5	 ActiveTrigger		false
 
 6	 UseChannel		true
 6	 ChannelNickname	RawPMT
 6	 ChannelPolarity	1
-6	 ChannelRange		1
-6	 ChannelOffset	        0.4
-6	 TriggerLevel		0.04
-6	 TriggerSlope		1
+6	 ChannelRange		0.25
+6	 ChannelOffset		-0.11
+6	 TriggerLevel		-0.01
+6	 TriggerSlope		0
 6	 ActiveTrigger		true (PMT=true)
 
 7	 UseChannel		false

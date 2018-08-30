@@ -90,7 +90,6 @@ int main (int argc, char *argv[])
 	}
 	else if(argc == 2)
 	{//Averaging all files in directory
-	  std::cout << "test 1" << std::endl;
 		readDirectory(argv[1]);
 		return 0;
 	}
@@ -105,7 +104,6 @@ int main (int argc, char *argv[])
 	if(!strcmp(opts, "draw") || !strcmp(opts, "rms"))
 		app = new TApplication("app", &argc, argv);
 	
-	std::cout << "test 2" << std::endl;
 	readTree(inputFileName, outputFileName, opts);
 	
 	return 0;
