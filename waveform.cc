@@ -26,6 +26,9 @@ during binary file import. But, take note that the std::cout-ing will take
 up lots of CPU.
   Using the flag "draw" after the binary file path will enable ROOT plotting.
 This feature is possibly broken (27/04/17).
+
+(19/06/2018)                                                                                                                                                                       
+Editted the file so that we have an event branch in root which channels as sub-branches. Just linking things uo more. It creates an event object (Event.h) by creating ChannelInfo objects (ChannelInfo.h).I haven't got rid of all the legacy code.   
 **********************************************/
 
 #include <fstream>
@@ -53,6 +56,8 @@ This feature is possibly broken (27/04/17).
 #include "TSystem.h"
 
 #include "AgMD2.h"
+#include "Event.h"
+#include "ChannelInfo.h"
 
 struct Header
 {
@@ -67,7 +72,7 @@ struct Header
   ViReal64 scaleOffset;
   ViUInt8 channelNumber;
   int eventNumber;
-  int Timestamp;
+  std::pair<int,int> Timestamp;
 };
 
 void printHeader(Header);
@@ -75,6 +80,9 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
 
 int main(int argc, char* argv[])
 {
+
+  gInterpreter->GenerateDictionary("Event","Event.h");
+  gInterpreter->GenerateDictionary("ChannelInfo","ChannelInfo.h");
 
   std::string fname = argv[1];
   std::vector<int> chans(8,0);
@@ -135,11 +143,13 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
       return 1;
     }
 
+  Event *event = new Event();
+
   TFile * fileout_draw = TFile::Open(TString::Format("%s_Draw.root",filename.substr(0,suff).c_str()),"RECREATE");
   TFile * fileout = TFile::Open(TString::Format("%s.root",filename.substr(0,suff).c_str()),"RECREATE");
   Int_t channel;
   Int_t source;//1=GPM_Anode1,2=GPM_Anode2,3=GPM_Top1,4=GPM_Top2,5=PMT_Raw,6=PMT_Shaped
-  Int_t timestamp;
+  std::pair<int,int> timestamp;
   Float_t baseVolt;
   Float_t baseAdc;
   Float_t baseRmsVolt;
@@ -156,21 +166,23 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
   
 
   TTree * tree = new TTree("pulsetree","Pulse Information");
-  tree->Branch("channel",&channel,"channel/I");
-  tree->Branch("source",&source,"source/I");
-  tree->Branch("baseVolt",&baseVolt,"baseVolt/F");
-  tree->Branch("baseAdc",&baseAdc,"baseAdc/F");
-  tree->Branch("baseRmsVolt",&baseRmsVolt,"baseRmsVolt/F");
-  tree->Branch("baseRmsAdc",&baseRmsAdc,"baseRmsAdc/F");
-  tree->Branch("amplitudeVolt",&amplitudeVolt,"amplitudeVolt/F");
-  tree->Branch("amplitudeAdc",&amplitudeAdc,"amplitudeAdc/F");
-  tree->Branch("maxVolt",&maxVolt,"maxVolt/F");
-  tree->Branch("maxAdc",&maxAdc,"maxAdc/F");
-  tree->Branch("peaktimeSec",&peaktimeSec,"peaktimeSec/F");
-  tree->Branch("peaktimeTdc",&peaktimeTdc,"peaktimeTdc/F");
-  tree->Branch("waveform", &waveform);
-  tree->Branch("timestamp",&timestamp,"timestamp/F");
-  tree->Branch("integral",&integral,"integral/F");
+  tree->Branch("event",&event,16000,99);
+
+  // tree->Branch("channel",&channel,"channel/I");
+  // tree->Branch("source",&source,"source/I");
+  // tree->Branch("baseVolt",&baseVolt,"baseVolt/F");
+  // tree->Branch("baseAdc",&baseAdc,"baseAdc/F");
+  // tree->Branch("baseRmsVolt",&baseRmsVolt,"baseRmsVolt/F");
+  // tree->Branch("baseRmsAdc",&baseRmsAdc,"baseRmsAdc/F");
+  // tree->Branch("amplitudeVolt",&amplitudeVolt,"amplitudeVolt/F");
+  // tree->Branch("amplitudeAdc",&amplitudeAdc,"amplitudeAdc/F");
+  // tree->Branch("maxVolt",&maxVolt,"maxVolt/F");
+  // tree->Branch("maxAdc",&maxAdc,"maxAdc/F");
+  // tree->Branch("peaktimeSec",&peaktimeSec,"peaktimeSec/F");
+  // tree->Branch("peaktimeTdc",&peaktimeTdc,"peaktimeTdc/F");
+  // tree->Branch("waveform", &waveform);
+  // tree->Branch("timestamp",&timestamp,"timestamp/F");
+  // tree->Branch("integral",&integral,"integral/F");
 
   Header head;
 
@@ -277,9 +289,9 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
 	      float triggerdelay = -0.1;
 
 	      std::vector<Float_t> wf = dataChannelMap[ichan+1];
-	      float integration_cut = 1000;
+	      float integration_cut = 6000;
 	      //float int_start = TMath::Abs(triggerdelay)*wf.size();
-	      float int_start = 200;
+	      float int_start = 1500;
 	      int wf_size = wf.size();
 	      if (draw) {
 		histMap[chans[ichan]]->SetBins(wf_size,0,wf_size);
@@ -302,37 +314,46 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
 	      float minimum = 9999;
 	      float maxpeaktime = -9999;
 	      float minpeaktime = -9999;
+	      float inttimeend = 9999;
+	      float intcounter = 0;
 	      float int_tot = 0;
 
 	      pedhist_map1[chans[ichan]] = new TH1I("ped_h","Pedestal Histogram",2048+1,-1024-0.5,1024+0.5);
 
-	      for (size_t v = 0; v < wf.size(); ++v)
+	      for (size_t v = 0; v <0.3* wf.size(); ++v)
 		{
-		  if (wf[v] > maximum)
+		  if(v > (TMath::Abs(triggerdelay)*wf.size()-int_start) && v<((TMath::Abs(triggerdelay)*wf.size())+integration_cut))
 		    {
-		      maximum = wf[v];
-		      maxpeaktime = v;
+		      if(wf[v]>baseAdc)
+			{
+			  int_tot +=wf[v];//only works for positive peaks
+			  inttimeend = v;//find end of integration limit
+			  intcounter++;
+			}
+		      if (wf[v] > maximum)
+			{
+			maximum = wf[v];
+			maxpeaktime = v;
+		      }
+		    if (wf[v] < minimum)
+		      {
+			minimum = wf[v];
+			minpeaktime = v;
+		      }
 		    }
-		  if (wf[v] < minimum)
-		    {
-		      minimum = wf[v];
-		      minpeaktime = v;
-		    }
-		  if(v > (TMath::Abs(triggerdelay)*wf.size()-int_start) && v<((TMath::Abs(triggerdelay)*wf.size())+integration_cut)){int_tot +=wf[v];}
-		  if(v < (TMath::Abs(triggerdelay)*wf.size()-int_start)  || v>((TMath::Abs(triggerdelay)*wf.size())+integration_cut+1000)){
+		  if(v < (TMath::Abs(triggerdelay)*wf.size()-int_start)  || v>((TMath::Abs(triggerdelay)*wf.size())+integration_cut+5000)){
 
 		    pedhist_map1[chans[ichan]]->Fill(wf[v]);
 		    if(wf[v]>max_ped){max_ped=wf[v];}
 		    if(wf[v]<min_ped){min_ped=wf[v];}
 		  }
 		}
-
 	      float ped_RMS = pedhist_map1[chans[ichan]]->GetRMS();
 	      float ped_mode = pedhist_map1[chans[ichan]]->GetXaxis()->GetBinCenter(pedhist_map1[chans[ichan]]->GetMaximumBin());
 
 	      TF1 *ped_fit = new TF1("ped_fit","gaus");
-	      ped_fit->SetParameter(1,ped_mode);
-	      ped_fit->SetParLimits(1,ped_mode-ped_RMS,ped_mode+ped_RMS);
+	      ped_fit->SetParameter(1,ped_RMS);
+	      ped_fit->SetParLimits(1,min_ped,max_ped);
 
 	      pedhist_map1[chans[ichan]]->Fit(ped_fit,"Q");
 
@@ -345,7 +366,7 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
 	      }
 	      TF1 *ped_fit2 = new TF1("ped_fit2","gaus");
 	      ped_fit2->SetParameter(1,ped_fit_mean);
-	      ped_fit2->SetParLimits(1,ped_fit_mean-ped_fit_stddev,ped_fit_mean+ped_fit_stddev);
+	      ped_fit2->SetParLimits(1,min_ped,max_ped);
 	      ped_fit2->SetParameter(2,ped_fit_stddev);
 	      pedhist_map2[chans[ichan]]->Fit(ped_fit2,"Q");
 
@@ -367,6 +388,7 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
 
     
 	      baseAdc = ped_fit2->GetParameter(1);
+	      baseAdc = ped_mode;
 
 	      ped_fit->Delete();
 	      ped_fit2->Delete();
@@ -375,15 +397,14 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
 	      else{ peaktimeTdc = minpeaktime;}
 
 	      maxAdc = 0;
-	      int count = 4;
+	      int count = 0;
 	      for (size_t i = peaktimeTdc-numavg; i < peaktimeTdc+numavg; ++i)
 	      	{
 	      	  maxAdc += wf[i];
 	      	  count++;
 	      	}
-
 	      maxAdc /= count;
-	      integral = TMath::Abs(int_tot - ((integration_cut+int_start)*baseAdc));
+	      integral = TMath::Abs(int_tot - (intcounter*baseAdc));
 	      maxVolt = scalefactor*maxAdc+scaleoffset;
 	      amplitudeAdc = fabs(maxAdc-baseAdc);
 	      amplitudeVolt = fabs(maxVolt-baseVolt);
@@ -393,8 +414,12 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
 	      source = chans[ichan];
 
 	      waveform = wf;
-	      
-	      tree->Fill();
+
+	      timestamp.first = head.Timestamp.first;
+	      timestamp.second = head.Timestamp.second;
+
+	      ChannelInfo channel_info = ChannelInfo(channel,baseVolt,baseAdc, baseRmsAdc,baseRmsVolt, maxVolt,maxAdc, peaktimeSec, peaktimeTdc,wf,timestamp,integral);
+              event->Add_Channel(channel_info);
 	      
 	      if (draw)
 		{
@@ -406,18 +431,22 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
 		  double base = baseAdc;
 		  int trig = peaktimeTdc;
 		  TLine *ltrig = new TLine(histMap[chans[ichan]]->GetBinCenter(trig),-125,histMap[chans[ichan]]->GetBinCenter(trig),125);
+		  ltrig->SetLineColor(kGreen);
 		  ltrig->Draw("same");
 		  TLine *lbase = new TLine(histMap[chans[ichan]]->GetBinCenter(0),base,histMap[chans[ichan]]->GetBinCenter(histMap[chans[ichan]]->GetNbinsX()),base);
 		  lbase->Draw("same");
-		  TLine *lpeak = new TLine(histMap[chans[ichan]]->GetBinCenter(0),base+height,histMap[chans[ichan]]->GetBinCenter(histMap[chans[ichan]]->GetNbinsX()),base+height);
-		  lpeak->Draw("same");
+		  TLine *lpeakh = new TLine(histMap[chans[ichan]]->GetBinCenter(0),base+height,histMap[chans[ichan]]->GetBinCenter(histMap[chans[ichan]]->GetNbinsX()),base+height);
+		  lpeakh->Draw("same");
+                  TLine *lpeakv = new TLine(trig,-125,trig,125);
+                  lpeakv->Draw("same");
 		  TLine *lpedcut1 = new TLine(TMath::Abs(triggerdelay)*wf.size()-int_start,-125,TMath::Abs(triggerdelay)*wf.size()-int_start,125);
-		  TLine *lpedcut2 = new TLine((TMath::Abs(triggerdelay)*wf.size())+integration_cut+1000, -125,(TMath::Abs(triggerdelay)*wf.size())+integration_cut+1000,125);
-		  TLine *integration_cut_line = new TLine((TMath::Abs(triggerdelay)*wf.size())+integration_cut, -125,(TMath::Abs(triggerdelay)*wf.size())+integration_cut,125);
+		  TLine *lpedcut2 = new TLine((TMath::Abs(triggerdelay)*wf.size())+integration_cut+5000, -125,(TMath::Abs(triggerdelay)*wf.size())+integration_cut+5000,125);
+		  TLine *integration_cut_line = new TLine(inttimeend, -125,inttimeend,125);
 		  lpedcut1->SetLineColor(kRed);
 		  lpedcut2->SetLineColor(kRed);
                   lpedcut1->Draw("same");
 		  lpedcut2->Draw("same");
+		  integration_cut_line->SetLineColor(kGreen);
 		  integration_cut_line->Draw("same");
 		  canv->Update();
 		  fileout->cd();
@@ -425,6 +454,10 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
 	      ++i;
 	    
 	    }
+
+	  event->Set_EventNumber(head.eventNumber);
+	  tree->Fill();
+	  event->Clear();
 	  
 	  if (draw)
 	    {
@@ -449,8 +482,6 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
 	    }
 
 	  pulsenumber = head.eventNumber;
-	  
-	  timestamp = head.Timestamp;
 	  
 	  if (numana%100==0) std::cout << numana << " -- Writing event " << head.eventNumber << " to file." << std::endl;
 	  numana++;

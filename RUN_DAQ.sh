@@ -13,8 +13,8 @@ fi
 timestamp=$(date +%s)
 fails=0
 
-while [ $timestamp -le 1535994000 ]
-do
+#while [ $timestamp -le 1535994000 ]
+#do
     tmpfile=tmpfile.txt
     $HOME/AgMD2_GPM/runGPM > $tmpfile
 
@@ -31,5 +31,5 @@ do
     fi
 
     python $WorkDir$Email 0
-done 
+#done 
 

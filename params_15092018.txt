@@ -2,8 +2,8 @@ global   Draw                   true
 
 global   ResourceName           PXI1::0::0::INSTR
 global   Simulate               false
-global   NumRecords             100
-global   RecordSize             20000 (change this to get the desired waveform length, RecordSize/1e9) (GPM = 100000, PMT = 20000)
+global   NumRecords             10000
+global   RecordSize             100000 (change this to get the desired waveform length, RecordSize/1e9) (GPM = 100000, PMT = 20000)
 global   SampleRate             1e9 (must stay 1 GS/s)
 global   TimeoutInMS            -1
 global   TriggerDelay           -0.1
@@ -49,14 +49,14 @@ global   IntegrationSize 4000
 2	 TriggerSlope		1
 2	 ActiveTrigger		false
 
-3	 UseChannel		true
+3	 UseChannel		false
 3	 ChannelNickname	Top2
-3	 ChannelPolarity	1
-3	 ChannelRange		2.5
-3	 ChannelOffset		0
-3	 TriggerLevel		-0.1
-3	 TriggerSlope		0
-3	 ActiveTrigger		true
+3	 ChannelPolarity	-1
+3	 ChannelRange		0.5
+3	 ChannelOffset		-0.24
+3	 TriggerLevel		0.15
+3	 TriggerSlope		1
+3	 ActiveTrigger		false
 
 4	 UseChannel		false
 4	 ChannelNickname	Anode2
@@ -76,20 +76,20 @@ global   IntegrationSize 4000
 5	 TriggerSlope		1
 5	 ActiveTrigger		false
 
-6	 UseChannel		false
+6	 UseChannel		true
 6	 ChannelNickname	RawPMT
 6	 ChannelPolarity	1
-6	 ChannelRange		0.25
-6	 ChannelOffset	        0.04
-6	 TriggerLevel		0.026
+6	 ChannelRange		1
+6	 ChannelOffset	        0.4
+6	 TriggerLevel		0.04
 6	 TriggerSlope		1
-6	 ActiveTrigger		false (PMT=true)
+6	 ActiveTrigger		true (PMT=true)
 
 7	 UseChannel		false
 7	 ChannelNickname	ShapedA2
 7	 ChannelPolarity	1
 7	 ChannelRange		1
-7	 ChannelOffset		-0.7
+7	 ChannelOffset		0
 7	 TriggerLevel		-0.39
 7	 TriggerSlope		1
 7	 ActiveTrigger		false (GPM=true)
