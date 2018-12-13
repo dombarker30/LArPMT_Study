@@ -48,7 +48,6 @@ Editted the file so that we have an event branch in root which channels as sub-b
 #include "TH1.h"
 #include "TF1.h"
 #include "TMath.h"
-#include "TApplication.h"
 #include "TLine.h"
 #include "TFile.h"
 #include "TTree.h"
@@ -81,8 +80,6 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
 int main(int argc, char* argv[])
 {
 
-  gInterpreter->GenerateDictionary("Event","Event.h");
-  gInterpreter->GenerateDictionary("ChannelInfo","ChannelInfo.h");
 
   std::string fname = argv[1];
   std::vector<int> chans(8,0);
@@ -119,11 +116,11 @@ int main(int argc, char* argv[])
   chans[6] = std::atoi(argv[8]);
   chans[7] = std::atoi(argv[9]);
       
-  TApplication app("gpm_ana",&argc,argv);
-  app.ExitOnException();
-  std::cout << draw << "  filename given = " << fname << std::endl;
+  //  TApplication app("gpm_ana",&argc,argv);
+  //app.ExitOnException();
+  //std::cout << draw << "  filename given = " << fname << std::endl;
   run(fname,chans,draw,signal_pos,fVerbose);
-  app.Run();
+  //app.Run();
   return 0;
 }
 
@@ -143,7 +140,7 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
       return 1;
     }
 
-  Event *event = new Event();
+  PixelData::SubSystems::Event *event = new PixelData::SubSystems::Event();
 
   TFile * fileout_draw = TFile::Open(TString::Format("%s_Draw.root",filename.substr(0,suff).c_str()),"RECREATE");
   TFile * fileout = TFile::Open(TString::Format("%s.root",filename.substr(0,suff).c_str()),"RECREATE");
@@ -418,8 +415,8 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
 	      timestamp.first = head.Timestamp.first;
 	      timestamp.second = head.Timestamp.second;
 
-	      ChannelInfo channel_info = ChannelInfo(channel,baseVolt,baseAdc, baseRmsAdc,baseRmsVolt, maxVolt,maxAdc, peaktimeSec, peaktimeTdc,wf,timestamp,integral);
-              event->Add_Channel(channel_info);
+	      PixelData::SubSystems::ChannelInfo channelinfo = PixelData::SubSystems::ChannelInfo(channel,baseVolt,baseAdc, baseRmsAdc,baseRmsVolt, maxVolt,maxAdc, peaktimeSec, peaktimeTdc,wf,timestamp,integral);
+              event->AddChannel(channelinfo);
 	      
 	      if (draw)
 		{
@@ -455,7 +452,7 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
 	    
 	    }
 
-	  event->Set_EventNumber(head.eventNumber);
+	  event->SetEventNumber(head.eventNumber);
 	  tree->Fill();
 	  event->Clear();
 	  
@@ -497,7 +494,7 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool signal_pos
   tree->Write();
   fileout->Close();
   fileout_draw->Close();
-  gApplication->Terminate(ret);
+  //  gApplication->Terminate(ret);
   return ret;
 }
 

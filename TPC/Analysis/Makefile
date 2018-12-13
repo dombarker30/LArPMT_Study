@@ -3,7 +3,7 @@ SHELL = /bin/sh
 include ../../makeconfig.mk
 
 DEPS        = ../DAQDecoder/Event.h ../DAQDecoder/ChannelInfo.h
-SRCFILES    = crt_coincidence.cc crt_calibration.cc
+SRCFILES    = PixelTPC_AnalysisExample.cc
 OBJFILES    = $(patsubst %.cc, $(OBJDIR)/%.so, $(SRCFILES))
 EXECUTABLES = $(patsubst %.cc, $(OUTDIR)/%, $(SRCFILES))
 
@@ -11,7 +11,7 @@ all: $(EXECUTABLES)
 
 .PRECIOUS: $(OBJFILES)
 
-$(OBJDIR)/%.so: %.cc ../DAQDecoder/SubSysEventDict.cxx 
+$(OBJDIR)/%.so: %.cc ../DAQDecoder/EventDict.cxx ../DAQDecoder/ChannelInfo.c
 	@echo Building Objectfile $@
 	@mkdir -p $(@D)
 	@$(CXX) $(SOFLAGS) $(CXXFLAGS) -o $@ -I$(ROOTSYS)/include $^ $(LIBS)
@@ -24,10 +24,10 @@ $(OUTDIR)/%: $(OBJDIR)/%.so
 .PHONY: clean
 
 clean:
-	@rm -f ./*~ ../DAQDecoder/SubSysEventDict* $(OBJFILES) $(EXECUTABLES)
+	@rm -f ./*~ ../DAQDecoder/EventDict* $(OBJFILES) $(EXECUTABLES)
 
-../DAQDecoder/SubSysEventDict.cxx: $(DEPS) ../DAQDecoder/Linkdef.h
+../DAQDecoder/EventDict.cxx: $(DEPS) ../DAQDecoder/Linkdef.h
 	@echo "Generating dictionary ..."
 	@rootcint -f $@ -c -p $^
-	@mv ../DAQDecoder/SubSysEventDict_rdict.pcm $(OBJDIR)/SubSysEventDict_rdict.pcm
+	@mv ../DAQDecoder/EventDict_rdict.pcm $(OBJDIR)/EventDict_rdict.pcm
 

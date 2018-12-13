@@ -2,12 +2,12 @@ SHELL = /bin/bash
 
 SRCDIR      = $(shell echo $$LArAnASRCDir)
 BASEDIR     = $(SRCDIR)..
-CC          = g++
+CC          = `root-config --cc`
 CXX         = `root-config --cxx`
-CPPFLAGS    = `root-config --cflags --glibs`
+CXXFLAGS    = `root-config --cflags`
 LDFLAGS     = `root-config --ldflags`
+SOFLAGS     = -fPIC -shared
 LIBS        = `root-config --glibs`
 COPTS       = -std=c++11
 OBJDIR      = $(shell echo $$LArANAOBJDir)
 OUTDIR      = $(shell echo $$LArANAEXEDir)
-

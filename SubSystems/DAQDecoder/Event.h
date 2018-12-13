@@ -3,26 +3,35 @@
 // will hold 2 channels which will hold the 
 // corresponding peak heights and times...
 //#########################################
+#ifndef AEVENT_H_
+#define AEVENT_H_
+
 #include <vector> 
 #include "ChannelInfo.h"
 
-class Event{
-
- public:
-  Event();
-  int EventNumber(){return event_number;}
-  std::vector<ChannelInfo> Channels(){return channel_vector;}
-  void Set_EventNumber(int event_num){event_number = event_num;}
-  void Add_Channel(ChannelInfo channel){channel_vector.push_back(channel);} 
-  void Clear(){event_number = -999999; channel_vector.clear();} 
-
- private: 
-  int event_number;
-  std::vector<ChannelInfo> channel_vector;
-  
-};
-
-
-Event::Event(){
-  event_number = -99999;
+namespace PixelData{
+  namespace SubSystems{
+    class Event{
+      
+    public:
+      Event(){
+	eventnumber = -99999; 
+      }
+      
+      const int EventNumber(){return eventnumber;}
+      const std::vector<PixelData::SubSystems::ChannelInfo> GetChannels(){return channelvector;}
+      
+      void SetEventNumber(int event_num){eventnumber = event_num;}
+      void AddChannel(PixelData::SubSystems::ChannelInfo channel){channelvector.push_back(channel);} 
+      void Clear(){eventnumber = -999999; channelvector.clear();} 
+      
+      
+    private: 
+      int eventnumber;
+      std::vector<PixelData::SubSystems::ChannelInfo> channelvector;
+    
+    };
+  }
 }
+    
+#endif /* EVENT_H_ */

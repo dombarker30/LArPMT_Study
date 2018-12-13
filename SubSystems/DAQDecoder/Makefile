@@ -3,28 +3,31 @@ SHELL = /bin/sh
 include ../../makeconfig.mk
 
 DEPS        = ./Event.h ./ChannelInfo.h
-SRCFILES    = KeySight_DAQDecoder.cc 
-OBJFILES    = $(patsubst %.cc, $(OBJDIR)/%.o, $(SRCFILES))
+SRCFILES    = KeySight_DAQDecoder.cc
+OBJFILES    = $(patsubst %.cc, $(OBJDIR)/%.so, $(SRCFILES))
 EXECUTABLES = $(patsubst %.cc, $(OUTDIR)/%, $(SRCFILES))
 
 all: $(EXECUTABLES)
 
 .PRECIOUS: $(OBJFILES)
 
-$(OBJDIR)/%.o: %.cc $(DEPS)
-	@echo $(SRCDIR)
-	@echo Building Objectfile $@ 
+$(OBJDIR)/%.so: %.cc SubSysEventDict.cxx 
+	@echo Building Objectfile $@
 	@mkdir -p $(@D)
-	@$(CC) $(COPTS) $(CPPFLAGS) $(CFLAGS) -lAgMD2 -c $< -o $@ 
+	@$(CXX) $(SOFLAGS) $(CXXFLAGS) -o $@ -I$(ROOTSYS)/include $^ -lAgMD2 $(LIBS)
 
-$(OUTDIR)/%: $(OBJDIR)/%.o
+$(OUTDIR)/%: $(OBJDIR)/%.so
 	@echo Compiling Exectuable $@
 	@mkdir -p $(@D)
-	@$(CXX) $(LDFLAGS) -o $@ $< $(LIBS)
+	@$(CXX) $(CXXFLAGS) -Wall -o $@ $< $(LIBS)
 
 .PHONY: clean
 
 clean:
-	@rm -f ./*~ $(OBJFILES) $(EXECUTABLES)
+	@rm -f ./*~ ./SubSysEventDict* $(OBJFILES) $(EXECUTABLES)
 
+SubSysEventDict.cxx: $(DEPS) Linkdef.h
+	@echo "Generating dictionary ..."
+	@rootcint -f $@ -c -p $^
+	@mv ./SubSysEventDict_rdict.pcm $(OBJDIR)/SubSysEventDict_rdict.pcm
 

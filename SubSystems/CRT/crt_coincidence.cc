@@ -48,12 +48,9 @@ int main(int argc,char **argv){
   TFile *file_in = new TFile(name);
   TTree *tree = (TTree*)file_in->Get("pulsetree");
   
-  //Incase there is no generated .so for the custom classes make one
-  gInterpreter->GenerateDictionary("Event","Event.h");
-  gInterpreter->GenerateDictionary("ChannelInfo","ChannelInfo.h");
 
   //Places holders for event information                                 
-  Event *event = new Event();
+  PixelData::SubSystems::Event *event = new PixelData::SubSystems::Event();
   std::cout << "test 4" << std::endl;
   TBranch *branch  = tree->GetBranch("event");
   std::cout << "test 5" << std::endl;
@@ -68,8 +65,8 @@ int main(int argc,char **argv){
 
   for(Long64_t i=0;i<tree->GetEntries();i++){
     branch->GetEntry(i);
-    std::vector<ChannelInfo> Channels = event->Channels();
-    for(std::vector<ChannelInfo>::iterator channel=Channels.begin();channel!=Channels.end(); ++channel){
+    std::vector<PixelData::SubSystems::ChannelInfo> Channels = event->GetChannels();
+    for(std::vector<PixelData::SubSystems::ChannelInfo>::iterator channel=Channels.begin();channel!=Channels.end(); ++channel){
       if(channel->channel == 1 && channel->maxVolt > pmt1_threshold){
         peaktime_pmt1 = channel->peaktimeSec;
       }
