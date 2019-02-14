@@ -30,6 +30,9 @@ namespace PixelData{
       int eventnumber;
       std::vector<PixelData::SubSystems::ChannelInfo> channelvector;
     
+      PixelData::SubSystems::ChannelInfo channel1; 
+      PixelData::SubSystems::ChannelInfo channel2;
+
     };
   }
 }
