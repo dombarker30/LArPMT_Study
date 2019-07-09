@@ -2,7 +2,7 @@ global   Draw                   false
 
 global   ResourceName           PXI1::0::0::INSTR
 global   Simulate               false
-global   NumRecords             1000
+global   NumRecords             10000
 global   RecordSize             20000 (change this to get the desired waveform length, RecordSize/1e9) (GPM = 100000, PMT = 20000)
 global   SampleRate             1e9 (must stay 1 GS/s)
 global   TimeoutInMS            -1

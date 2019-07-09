@@ -79,34 +79,10 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
 
 int main(int argc, char* argv[]){
 
+  gROOT->SetBatch();
+
   std::string fname = argv[1];
   std::vector<int> chans(8,0);
-  
-  bool draw       = false;
-  bool fVerbose   = false;
-  int  num_events = -1;
-
-  if (argc>10){
-    if (std::string(argv[10]) == "draw")
-      draw = true;
-    if(std::string(argv[10]) == "Verbose")
-      fVerbose =true;
-  }
-
-  // if(c=getopt(argc, argv, "n:") != -1){
-  //   num_events = n;
-  // }
-
-  if (argc>11){
-    if (std::string(argv[10]) == "draw")
-      draw = true;
-    if(std::string(argv[10]) == "Verbose")
-      fVerbose =true;
-    if(std::string(argv[11]) == "Verbose")
-      fVerbose =true;
-    if (std::string(argv[11]) == "draw")
-      draw = true;
-  }
   
   chans[0] = std::atoi(argv[2]);
   chans[1] = std::atoi(argv[3]);
@@ -116,6 +92,37 @@ int main(int argc, char* argv[]){
   chans[5] = std::atoi(argv[7]);
   chans[6] = std::atoi(argv[8]);
   chans[7] = std::atoi(argv[9]);
+
+  bool draw       = false;
+  bool fVerbose   = false;
+  int  num_events = -1;
+
+  int c;
+  while ((c = getopt (argc, argv, "n:d:D:v:V")) != -1){
+    switch (c){
+      case 'n':
+        num_events = std::atoi(optarg);
+	break;
+      case 'd':
+	std::cout << "Setting to draw" << std::endl;
+        draw = true;
+	break;
+      case 'D':
+	std::cout << "Setting to draw" << std::endl;
+	draw = true;
+	break;
+      case 'v':
+	std::cout << "Setting to talk" << std::endl;
+	fVerbose = true;
+	break;
+      case 'V':
+	std::cout << "Setting to talk" << std::endl;
+	fVerbose = true;
+      case '?':
+	std::cout << "Unknown option" << std::endl;
+        return 1;
+    }
+  }
   
   run(fname,chans,draw,fVerbose,num_events);
   return 0;
@@ -154,6 +161,7 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
   Float_t baseRmsVolt;
   Float_t baseRmsAdc;
   Float_t integral;
+  Float_t integralCharge;
   Float_t maxVolt;
   Float_t maxAdc;
   Float_t peaktimeSec;
@@ -183,7 +191,7 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
   while (!filein.eof()){
     
     if(num_events > 0){
-      if(event_num > num_events){break;}
+      if(event_num == num_events){break;}
     }
 
     //Read the datat into the file 
@@ -252,7 +260,6 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
 	}
       }
 
-      int i=1;
       for(int ichan = 0; ichan < (int)chans.size(); ++ichan){
 	
 	if (chans[ichan] == 0) continue;
@@ -282,7 +289,6 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
 	
 	int numavg = 1;
 	int iterations = 2; 
-	if (fabs(chans[ichan]) == 5) numavg = 1;
 	float maximum = -9999;
 	float max_ped = -9999;
 	float min_ped = 9999;
@@ -346,9 +352,9 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
 	  ped_fit->SetParameter(1,ped_RMS);
 	  ped_fit->SetParLimits(1,min_ped,max_ped);
 	
-	  std::cout << "test1" << std::endl;
+	  //std::cout << "test1" << std::endl;
 	  pedhist_map1[chans[ichan]]->Fit(ped_fit,"Q");
-	  std::cout << "test2" << std::endl;
+	  //std::cout << "test2" << std::endl;
 	  float ped_fit_mean = ped_fit->GetParameter(1);
 	  float ped_fit_stddev = ped_fit->GetParameter(2);
 	  
@@ -380,9 +386,9 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
 	  ped_fit2->SetParameter(1,ped_fit_mean);
 	  ped_fit2->SetParLimits(1,min_ped,max_ped);
 	  ped_fit2->SetParameter(2,ped_fit_stddev);
-	  std::cout << "test3" << std::endl;
+	  //std::cout << "test3" << std::endl;
 	  pedhist_map2[chans[ichan]]->Fit(ped_fit2,"Q");
-	  std::cout << "test4" << std::endl;
+	  //std::cout << "test4" << std::endl;
 	  if(fVerbose){
 	    std::cout << "First Mode: " << ped_mode << "second mode: " << pedhist_map2[chans[ichan]]->GetXaxis()->GetBinCenter(pedhist_map2[chans[ichan]]->GetMaximumBin()) << " baseAdc: " << ped_fit2->GetParameter(1);		    
 	  }
@@ -445,13 +451,14 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
 	  
 	//maxAdc /= count;
 	
-	maxAdc        = wf[peaktimeTdc];
-	integral      = TMath::Abs(int_tot - (intcounter*baseAdc));
-	baseVolt      = scalefactor*baseAdc+scaleoffset;
-	baseRmsAdc    = baseAdcrms;
-	baseRmsVolt   = scalefactor*baseRmsAdc+scaleoffset;
-	maxVolt       = scalefactor*maxAdc+scaleoffset;
-	peaktimeSec   = headerMap[ichan+1].initialXOffset+headerMap[ichan+1].xIncrement*peaktimeTdc;
+	maxAdc         = wf[peaktimeTdc];
+	integral       = TMath::Abs(int_tot - (intcounter*baseAdc));
+	integralCharge = integral*scalefactor*(2e-11);//convert ADC to V then divide by 1e9/50 
+	baseVolt       = scalefactor*baseAdc+scaleoffset;
+	baseRmsAdc     = baseAdcrms;
+	baseRmsVolt    = scalefactor*baseRmsAdc+scaleoffset;
+	maxVolt        = scalefactor*maxAdc+scaleoffset;
+	peaktimeSec    = headerMap[ichan+1].initialXOffset+headerMap[ichan+1].xIncrement*peaktimeTdc;
 	
 	channel = ichan+1;
 	source = chans[ichan];
@@ -461,9 +468,9 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
 	timestamp.first = head.Timestamp.first;
 	timestamp.second = head.Timestamp.second;
 	
-	PixelData::SubSystems::ChannelInfo channelinfo = PixelData::SubSystems::ChannelInfo(channel,baseVolt,baseAdc, baseRmsAdc,baseRmsVolt, maxVolt,maxAdc, peaktimeSec, peaktimeTdc,wf,timestamp,integral);
+	PixelData::SubSystems::ChannelInfo channelinfo = PixelData::SubSystems::ChannelInfo(channel,baseVolt,baseAdc, baseRmsAdc,baseRmsVolt, maxVolt,maxAdc, peaktimeSec, peaktimeTdc,wf,timestamp,integral,integralCharge);
 	event->AddChannel(channelinfo);
-	
+      
 	if (draw){
 	  
 	  fileout_draw->cd();
@@ -492,7 +499,6 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
 	  lpedcut2->Draw("same");
 	  canv->Update();
 	}
-	++i;
       }//Channel Loop
 
       fileout->cd();

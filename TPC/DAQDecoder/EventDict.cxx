@@ -1,6 +1,6 @@
 // Do NOT change. Changes will be lost next time file is generated
 
-#define R__DICTIONARY_FILENAME dOdOdIDAQDecoderdIEventDict
+#define R__DICTIONARY_FILENAME EventDict
 
 /*******************************************************************/
 #include <stddef.h>
@@ -37,8 +37,9 @@
 namespace std {} using namespace std;
 
 // Header files passed as explicit arguments
-#include "../DAQDecoder/Event.h"
-#include "../DAQDecoder/ChannelInfo.h"
+#include "Event.h"
+#include "ChannelInfo.h"
+#include "/home/argonshef/CAENDAQ/PixelDAQ/include/PixelReadout.hh"
 
 // Header files passed via #pragma extra_include
 
@@ -57,7 +58,7 @@ namespace ROOT {
       ::PixelData::TPC::ChannelInfo *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::PixelData::TPC::ChannelInfo));
       static ::ROOT::TGenericClassInfo 
-         instance("PixelData::TPC::ChannelInfo", "../DAQDecoder/ChannelInfo.h", 14,
+         instance("PixelData::TPC::ChannelInfo", "ChannelInfo.h", 16,
                   typeid(::PixelData::TPC::ChannelInfo), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &PixelDatacLcLTPCcLcLChannelInfo_Dictionary, isa_proxy, 4,
                   sizeof(::PixelData::TPC::ChannelInfo) );
@@ -102,7 +103,7 @@ namespace ROOT {
       ::PixelData::TPC::Event *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::PixelData::TPC::Event));
       static ::ROOT::TGenericClassInfo 
-         instance("PixelData::TPC::Event", "../DAQDecoder/Event.h", 13,
+         instance("PixelData::TPC::Event", "Event.h", 13,
                   typeid(::PixelData::TPC::Event), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &PixelDatacLcLTPCcLcLEvent_Dictionary, isa_proxy, 4,
                   sizeof(::PixelData::TPC::Event) );
@@ -366,13 +367,14 @@ namespace ROOT {
 namespace {
   void TriggerDictionaryInitialization_EventDict_Impl() {
     static const char* headers[] = {
-"../DAQDecoder/Event.h",
-"../DAQDecoder/ChannelInfo.h",
+"Event.h",
+"ChannelInfo.h",
+"/home/argonshef/CAENDAQ/PixelDAQ/include/PixelReadout.hh",
 0
     };
     static const char* includePaths[] = {
 "/home/argonshef/root-6.08.00/builddir/include",
-"/home/argonshef/LArAnalysis/srcs/TPC/Analysis/",
+"/home/argonshef/LArAnalysis/srcs/TPC/DAQDecoder/",
 0
     };
     static const char* fwdDeclCode = R"DICTFWDDCLS(
@@ -381,8 +383,8 @@ namespace {
 #pragma clang diagnostic ignored "-Wignored-attributes"
 #pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
 extern int __Cling_Autoloading_Map;
-namespace PixelData{namespace TPC{class __attribute__((annotate("$clingAutoload$../DAQDecoder/Event.h")))  ChannelInfo;}}
-namespace PixelData{namespace TPC{class __attribute__((annotate("$clingAutoload$../DAQDecoder/Event.h")))  Event;}}
+namespace PixelData{namespace TPC{class __attribute__((annotate("$clingAutoload$Event.h")))  ChannelInfo;}}
+namespace PixelData{namespace TPC{class __attribute__((annotate("$clingAutoload$Event.h")))  Event;}}
 )DICTFWDDCLS";
     static const char* payloadCode = R"DICTPAYLOAD(
 #line 1 "EventDict dictionary payload"
@@ -392,8 +394,9 @@ namespace PixelData{namespace TPC{class __attribute__((annotate("$clingAutoload$
 #endif
 
 #define _BACKWARD_BACKWARD_WARNING_H
-#include "../DAQDecoder/Event.h"
-#include "../DAQDecoder/ChannelInfo.h"
+#include "Event.h"
+#include "ChannelInfo.h"
+#include "/home/argonshef/CAENDAQ/PixelDAQ/include/PixelReadout.hh"
 
 #undef  _BACKWARD_BACKWARD_WARNING_H
 )DICTPAYLOAD";

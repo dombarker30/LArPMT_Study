@@ -27,6 +27,7 @@ namespace PixelData{
       std::vector<Float_t>  waveform;
       std::pair<int,int> timestamp;
       Float_t   integral; 
+      Float_t   integralCharge;
     
       ChannelInfo(){
 	channel  = -99999;
@@ -40,9 +41,10 @@ namespace PixelData{
 	peaktimeTdc = -99999;
 	timestamp = std::make_pair(-99999,-99999);
 	integral = -99999;
+	integralCharge = -99999;
       }
     
-      ChannelInfo(Int_t chan, Float_t baseVoltage,Float_t baselineAdc, Float_t baseRmsAdcs, Float_t baseRmsVolts, Float_t maxVolts, Float_t maxAdcs, Float_t peaktimeSecs, Float_t peaktimeTdcs, std::vector<Float_t> wf, std::pair<int,int> ts, Float_t sum){
+      ChannelInfo(Int_t chan, Float_t baseVoltage,Float_t baselineAdc, Float_t baseRmsAdcs, Float_t baseRmsVolts, Float_t maxVolts, Float_t maxAdcs, Float_t peaktimeSecs, Float_t peaktimeTdcs, std::vector<Float_t> wf, std::pair<int,int> ts, Float_t sum, Float_t sumCharge){
 	channel = chan;
 	baseVolt = baseVoltage;
 	baseAdc = baselineAdc;
@@ -56,6 +58,7 @@ namespace PixelData{
 	timestamp.first = ts.first;
 	timestamp.second = ts.second;
 	integral = sum;
+	integralCharge = sumCharge;
       }
     };
   }

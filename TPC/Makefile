@@ -1,6 +1,6 @@
 SHELL = /bin/sh
 
-SUBDIRS := DAQDecoder Analysis
+SUBDIRS := DAQDecoder Analysis OnlineAnalysis
 
 all: $(SUBDIRS)
 $(SUBDIRS):

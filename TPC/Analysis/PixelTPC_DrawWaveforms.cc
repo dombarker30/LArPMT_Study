@@ -169,9 +169,6 @@ int DrawWaveforms(std::string& filename){
     
     for(std::vector<PixelData::TPC::ChannelInfo>::const_iterator channel=Channels.begin(); channel!=Channels.end(); ++channel){
       
-      if(channel->GetChannelNumber() >1){continue;}
-      std::cout << "Test: " << channel->GetChannelNumber() << std::endl;
-
       const int NADC            = channel->GetNADC();
       const float Pedestal      = channel->GetPedestal();
       const std::vector<int> Waveform = channel->GetWaveform();

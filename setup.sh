@@ -7,7 +7,7 @@ export LArANAEXEDir=$LArAnASRCDir/../build/exe
 export LArANABUILDDIR=$LArAnASRCDir/../build
 
 
-#Setup the installer
+ #Setup the installer
 larinstall(){
     current_dir=$PWD;
     cd $LArAnASRCDir; 
@@ -18,8 +18,9 @@ larinstall(){
 
 #Setup the uninstaller
 laruninstall(){
-    rm -rf $LArAnASRCDir;
-    rm -rf $LArANABUILDDIR;
+echo "You Fool. You cannot uninstall me"
+#    rm -rf $LArAnASRCDir;
+#    rm -rf $LArANABUILDDIR;
 }
 
 lartillclean(){
@@ -30,11 +31,12 @@ lartillclean(){
 #Setup the Quick DAQ Commands
 export startdaq=/home/argonshef/CAENDAQ/PixelDAQ/bin/x86_64/Release/DAQDriver.bin 
 alias  daqdir="cd /home/argonshef/CAENDAQ/PixelDAQ/"
+alias  startkeysightdaq="/home/argonshef/KeysightDAQ/runGPM"
 
-#Setup the Quick exuctable commands.
 export crt_calibration=$LArANAEXEDir/crt_calibration
 export crt_coincidence=$LArANAEXEDir/crt_coincidence
-export KeySight_DAQDecoder=$LArANAEXEDir/KeySight_DAQDecoder
+#export KeySight_DAQDecoder=$LArANAEXEDir/KeySight_DAQDecoder
+export KeySight_DAQDecoder=/home/argonshef/LArAnalysis/build/exe/KeySight_DAQDecoder
 export PixelTPC_DAQDecoder=$LArANAEXEDir/PixelTPC_DAQDecoder
 
 #print Commands and locations 
@@ -55,6 +57,10 @@ echo "#                                                             #"
 echo "# startdaq will run the DAQ exectuable with the config file   #"
 echo "# found in the CAENDAQ/PixelDAQ/srcs. If the DAQ is running   #"
 echo "# you can quit anytime by pressing q.                         #" 
+echo "#                                                             #"
+echo "# 'startkeysightdaq' will run the DAQ for the PMT and/or CRTs #"
+echo "# using the config file params.txt found in                   #"
+echo "# 'LArAnalysis/srcs/SubSystems/DAQConfig'.                    #"
 echo "###############################################################"
 }
 

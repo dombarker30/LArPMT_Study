@@ -2,7 +2,7 @@ SHELL = /bin/sh
 
 include ../../makeconfig.mk
 
-DEPS        = ./Event.h ./ChannelInfo.h
+DEPS        = ./Event.h ./ChannelInfo.h /home/argonshef/CAENDAQ/PixelDAQ/include/PixelReadout.hh
 SRCFILES    = PixelTPC_DAQDecoder.cc
 OBJFILES    = $(patsubst %.cc, $(OBJDIR)/%.so, $(SRCFILES))
 EXECUTABLES = $(patsubst %.cc, $(OUTDIR)/%, $(SRCFILES))
@@ -11,7 +11,7 @@ all: $(EXECUTABLES)
 
 .PRECIOUS: $(OBJFILES)
 
-$(OBJDIR)/%.so: %.cc EventDict.cxx ChannelInfo.c
+$(OBJDIR)/%.so: %.cc EventDict.cxx ChannelInfo.c /home/argonshef/CAENDAQ/PixelDAQ/srcs/ChannelMap.cc
 	@echo Building Objectfile $@
 	@mkdir -p $(@D)
 	@$(CXX) $(SOFLAGS) $(CXXFLAGS) -o $@ -I$(ROOTSYS)/include $^ -lCAENDigitizer $(LIBS)

@@ -40,8 +40,8 @@ namespace PixelData{
       int  LastestTimeStamp(pqxx::nontransaction& N); //Get the latest event time
       void InitialiseFigure(std::string MetricName, std::string MetricTitle, int bins, float low, float high); //Create the figures
       void FillFigures(float time_avg, int lastesttimestamp, std::vector<std::string> MetricNames, pqxx::nontransaction& N); //Fill the figures from info from the database 
-      void FillFigure(std::string MetricName, float value, int channel); //Fill the figures for the metric
-      void FillFigure(std::string MetricName, int value, int channel);   //Fill the figures for the metric  
+      void FillFigure(std::string MetricName, float value, std::string channelID, int channel); //Fill the figures for the metric
+      void FillFigure(std::string MetricName, int value, std::string channelID, int channel);   //Fill the figures for the metric  
       void PlotFigures(std::vector<std::string> MetricNames, pqxx::connection& conn); //Plot the figures
       void PlotFigure(std::string MetricName, pqxx::connection& conn);
       void SetupOutputFile(); //Create an output file the date created variable

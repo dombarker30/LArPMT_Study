@@ -2,24 +2,29 @@ SHELL = /bin/sh
 
 include ../../makeconfig.mk
 
-DEPS        = ../DAQDecoder/Event.h ../DAQDecoder/ChannelInfo.h
-SRCFILES    = PixelTPC_AnalysisExample.cc
+DEPS        = ../DAQDecoder/Event.h ../DAQDecoder/ChannelInfo.h 
+SRCFILES    = PixelTPC_AnalysisExample.cc PixelTPC_DrawWaveforms.cc 
 OBJFILES    = $(patsubst %.cc, $(OBJDIR)/%.so, $(SRCFILES))
 EXECUTABLES = $(patsubst %.cc, $(OUTDIR)/%, $(SRCFILES))
 
-all: $(EXECUTABLES)
+all: $(OBJDIR)/keyb.o $(EXECUTABLES)
 
 .PRECIOUS: $(OBJFILES)
 
-$(OBJDIR)/%.so: %.cc ../DAQDecoder/EventDict.cxx ../DAQDecoder/ChannelInfo.c
+$(OBJDIR)/keyb.o: keyb.c 
 	@echo Building Objectfile $@
 	@mkdir -p $(@D)
-	@$(CXX) $(SOFLAGS) $(CXXFLAGS) -o $@ -I$(ROOTSYS)/include $^ $(LIBS)
+	@$(CXX) $(LINUX) keyb.h -c -o $@ $<
 
-$(OUTDIR)/%: $(OBJDIR)/%.so
+$(OBJDIR)/%.so: %.cc ../DAQDecoder/EventDict.cxx ../DAQDecoder/ChannelInfo.c 
+	@echo Building Objectfile $@
+	@mkdir -p $(@D)
+	@$(CXX) $(SOFLAGS) $(CXXFLAGS) -o $@  -I $(ROOTSYS)/include $^ $(LIBS)
+
+$(OUTDIR)/%: $(OBJDIR)/%.so 
 	@echo Compiling Exectuable $@
 	@mkdir -p $(@D)
-	@$(CXX) $(CXXFLAGS) -Wall -o $@ $< $(LIBS)
+	@$(CXX) $(CXXFLAGS) -Wall -o $@ $(OBJDIR)/keyb.o $< $(LIBS) 
 
 .PHONY: clean
 

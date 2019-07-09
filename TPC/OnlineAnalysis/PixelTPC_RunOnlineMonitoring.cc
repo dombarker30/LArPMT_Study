@@ -152,8 +152,9 @@ int AnalysisExample(std::string& filename){
       
       //if (channel->GetChannelNumber()<25 && event->GetEventNumber()==99) {
 	std::cout<<"Channel: "<<channel->GetChannelNumber()<<std::endl;
+	std::string test = "test";
 	auto t1 = std::chrono::high_resolution_clock::now();
-	PixelData::TPC::OnlineMonitor online2 = PixelData::TPC::RunOffline(Waveform,channel->GetChannelNumber(),event->GetEventNumber(), event->GetTimeStamp(),true,false,true);
+	PixelData::TPC::OnlineMonitor online2 = PixelData::TPC::RunOffline(Waveform,channel->GetChannelNumber(),test,event->GetEventNumber(), event->GetTimeStamp(),true,false,true);
 	auto t2 = std::chrono::high_resolution_clock::now();
 	
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();

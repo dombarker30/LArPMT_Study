@@ -1,4 +1,5 @@
 #include "ChannelInfo.h"
+#include <stddef.h>
 
 PixelData::TPC::ChannelInfo::ChannelInfo(){
   ChannelNumber  = -99999;
@@ -6,8 +7,9 @@ PixelData::TPC::ChannelInfo::ChannelInfo(){
   Pedestal       = -99999;
 };
 
-PixelData::TPC::ChannelInfo::ChannelInfo(int ChanNum, int NumADC, float Ped, std::vector<int> WF){
+PixelData::TPC::ChannelInfo::ChannelInfo(int ChanNum, std::string ChanID, int NumADC, float Ped, std::vector<int> WF){
   ChannelNumber = ChanNum;
+  ChannelID     = ChanID;
   NADC          = NumADC;
   Pedestal      = Ped;
   Waveform      = WF;
@@ -15,6 +17,7 @@ PixelData::TPC::ChannelInfo::ChannelInfo(int ChanNum, int NumADC, float Ped, std
 
 void PixelData::TPC::ChannelInfo::Clear(){
   ChannelNumber  = -99999;
+  ChannelID.clear();
   NADC           = -99999;
   Pedestal       = -99999;
   Waveform.clear();

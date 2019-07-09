@@ -116,8 +116,10 @@ void PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigures(float time_avg
     //Go back over the last x mins and average over  
     for (pqxx::result::const_iterator c = GetInfo.begin(); c != GetInfo.end(); ++c){
       
-      int channel         = c[2].as<int>();
-      int timestampsecond = c[0].as<int>();
+      
+      std::string channelID       = c[3].as<std::string>();
+      int         channel         = c[2].as<int>();
+      int         timestampsecond = c[0].as<int>();
       
       PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[0],c[0].as<int>(),channel);
       PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[1],c[1].as<int>(),channel);
@@ -144,12 +146,11 @@ void PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigures(float time_avg
 };
 
 //Fill the histograms 
-void PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(std::string MetricName, int value, int channel){
+void PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(std::string MetricName, int value, std::string channelID, int channel){
 
-  //If somehow the channels don't come through correctly lets not fill them 
-  if(channel < 0 || channel > 62){return;}
-
-  if(channel < 36){
+  //Check to see if its an ROI or Pixel 
+  int chanStrLength = channelID.size();
+  if(chanStrLength>5){
     MetricsPixels_AvgHist_Map[MetricName]->Fill(value);
   }
   else{
@@ -162,12 +163,11 @@ void PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(std::string Met
 };
 
 //Fill the histograms 
-void PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(std::string MetricName, float value, int channel){
+void PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(std::string MetricName, float value, std::String channelID, int channel){
 
-  //If somehow the channels don't come through correctly lets not fill them 
-  if(channel < 0 || channel > 62){return;}
-
-  if(channel < 36){
+  //Check to see if its an ROI or Pixel 
+  int chanStrLength = channelID.size();
+  if(chanStrLength>5){
     MetricsPixels_AvgHist_Map[MetricName]->Fill(value);
   }
   else{
@@ -348,7 +348,10 @@ void PixelData::OnlineMointoring::OnlineDataBaseHist::PlotFigure(std::string Met
     //Write the TGraph 
     Metrics_Graph_ChanMap[i][MetricName]->Write();
 
-    //Add to the MultiGraphs
+    //use the channel map to find if ROI or PPixels 
+    std::string channelID = DAQ::ChannelMap::GetChannelID(ch+1, channelMap);
+
+    //Add to the MultiGraph 
     if(i<36){
       MetricsPixels_MultiGraph_Map[MetricName]->Add(Metrics_Graph_ChanMap[i][MetricName]);
     }

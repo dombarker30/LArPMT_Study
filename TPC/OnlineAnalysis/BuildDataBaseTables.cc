@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
       return 1;
     }
 
-    std::vector<std::string> Metrics = {"timestampsecond","timestampnanosecond","channel","eventnumber","avgpeakheight","maxpeakheight","rms","baseline","numhits"}; 
+    std::vector<std::string> Metrics = {"timestampsecond","timestampnanosecond","channel","channelID","eventnumber","avgpeakheight","maxpeakheight","rms","baseline","numhits"}; 
 
     const char * sql;
     

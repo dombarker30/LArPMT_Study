@@ -24,7 +24,7 @@ int main(int argc, char* argv[]){
 
   int c;
 
-  //Check to see if a input file is used (i) or a .txt file (s) or both 
+  //Check to see if a input file is a .root (i) or a .txt file (s) or both 
   while ((c=getopt(argc, argv, "i:s:")) != -1){
     switch (c) {
     case 'i':
@@ -134,9 +134,11 @@ int AnalysisExample(std::string& filename){
     const std::vector<PixelData::TPC::ChannelInfo> Channels = event->GetChannels();
     for(std::vector<PixelData::TPC::ChannelInfo>::const_iterator channel=Channels.begin(); channel!=Channels.end(); ++channel){
 
-      const int NADC = channel->GetNADC();
-      const float Pedestal = channel->GetPedestal();
-      const std::vector<int>  Waveform = channel->GetWaveform();
+      const int NADC            = channel->GetNADC();
+      const float Pedestal      = channel->GetPedestal();
+      const std::vector<int> Waveform = channel->GetWaveform();
+
+      
       
       std::cout << "NADC: " << NADC << " Pedestal: " << Pedestal << std::endl;
 

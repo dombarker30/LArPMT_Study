@@ -1,3 +1,14 @@
+//#######################################################
+//## Name:        PixelTPC_DAQDecoder                   #
+//## Author:      Dominic Barker                        #
+//## Date:        Nov 2018                              #
+//##                                                    #
+//## Description: Module to take in binary DAQ files    #
+//##              and create a root file with event     #
+//##              objects.                              #
+//#######################################################
+
+
 //DAQ Includes 
 #include "/home/argonshef/CAENDAQ/PixelDAQ/include/PixelReadout.hh"
 
@@ -25,9 +36,8 @@ int main(int argc, char* argv[]){
 
   std::vector<std::string> inputfiles;
   std::vector<std::string> txtfiles;
-
+  
   int c;
-
   //Check to see if a input file is used (i) or a .txt file (s) or both 
   while ((c=getopt(argc, argv, "i:s:")) != -1){
     switch (c) {
@@ -45,7 +55,7 @@ int main(int argc, char* argv[]){
 
   //Check to see if the there is a one to one for tags and files
   if (argc - optind < 0) {
-    std::cout << "Usage: " << argv[0] << " -s .txtfile or/and -i .dat " << std::endl;
+    std::cout << "Usage: " << argv[0] << " -s .txt or/and -i .dat " << std::endl;
     return 1;
   }
 
@@ -149,6 +159,8 @@ int MakerootFile(std::string& filename){
 
   int numboards = header->NumBoards;
 
+  std::map<int,std::string> channelMap = DAQ::ChannelMap::InitChannelMap();
+
   //#######################
   //### Writing to File ###
   //#######################
@@ -182,7 +194,9 @@ int MakerootFile(std::string& filename){
     //Read the channel data
     for(uint16_t ch=0; ch<eventheader->NumChannels; ++ch){
       
-      uint16_t  *DataChannel = new uint16_t[9];
+      
+      //uint16_t  *DataChannel = new uint16_t[9];
+      uint16_t  *DataChannel = new uint16_t[(Int_t)eventheader->ChSize];
       filein.read(reinterpret_cast<char*>(DataChannel),sizeof(uint16_t)*eventheader->ChSize);
 
       TH1I* PedHist = new TH1I("PedHist","PedHist",4096,0,4096);
@@ -228,8 +242,8 @@ int MakerootFile(std::string& filename){
 
       //Find wich board the event came from and label the channel.
       int channel = ch + eventheader->NumChannels*0;
-
-      PixelData::TPC::ChannelInfo ChannelData = PixelData::TPC::ChannelInfo(channel,(int) nadc,pedestal,waveform);
+      std::string channelID = DAQ::ChannelMap::GetChannelID(ch+1, channelMap);
+      PixelData::TPC::ChannelInfo ChannelData = PixelData::TPC::ChannelInfo(channel, channelID, (int) nadc, pedestal, waveform);
 
       //std::cout << "Channel:  " << channel << std::endl;
       //std::cout << "nadc:     " << nadc << std::endl;
