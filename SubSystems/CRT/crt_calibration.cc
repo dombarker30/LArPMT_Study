@@ -27,11 +27,11 @@
 #include "../DAQDecoder/Event.h"
 
 int main(){
-
+  std::cout<<"Test"<<std::endl;
   std::ofstream paramsOut ("crt_calibrationOut.txt");
 
   //User depedent parameters
-  float pmt2_threshold =0.3;
+  float pmt2_threshold =0.2;
   float pmt1_threshold =0.01;
 
   //Read the waveform file 
@@ -145,8 +145,9 @@ int main(){
 
   if (paramsOut.is_open()){ 
     paramsOut<<mean<<"\n";
-    paramsOut<<RMS;
-    
+    paramsOut<<RMS<<"\n";
+    paramsOut<<pmt1_threshold<<"\n";
+    paramsOut<<pmt2_threshold<<"\n";
     paramsOut.close();
   }
 

@@ -3,7 +3,7 @@ global   Draw                   true
 global   ResourceName           PXI1::0::0::INSTR
 global   Simulate               false
 global   NumRecords             10000
-global   RecordSize             1000 (change this to get the desired waveform length, RecordSize/1e9) (GPM = 100000, PMT = 20000)
+global   RecordSize             20000 (change this to get the desired waveform length, RecordSize/1e9) (GPM = 100000, PMT = 20000)
 global   SampleRate             1e9 (must stay 1 GS/s)
 global   TimeoutInMS            -1
 global   TriggerDelay           -0.5
@@ -45,49 +45,49 @@ global   TriggerSigmaThreshold  5
 1        ActiveTrigger          false
 
 2	 UseChannel		false
-2	 ChannelNickname	Trig
-2	 ChannelPolarity	1
-2	 ChannelRange		1
-2	 ChannelOffset	        -0.25	
-2	 TriggerLevel		-0.2
-2	 TriggerSlope		0
-2	 ActiveTrigger		true
+2	 ChannelNickname	Top1
+2	 ChannelPolarity	-1
+2	 ChannelRange		0.5
+2	 ChannelOffset		-0.24
+2	 TriggerLevel		0
+2	 TriggerSlope		1
+2	 ActiveTrigger		false
 
-3	 UseChannel		true
-3	 ChannelNickname	CRT3
-3	 ChannelPolarity	1
+3	 UseChannel		false
+3	 ChannelNickname	Top2
+3	 ChannelPolarity	-1
 3	 ChannelRange		0.5
-3	 ChannelOffset		-0.2
-3	 TriggerLevel		-0.15
-3	 TriggerSlope		0
+3	 ChannelOffset		-0.24
+3	 TriggerLevel		0.15
+3	 TriggerSlope		1
 3	 ActiveTrigger		false
 
-4	 UseChannel		true
-4	 ChannelNickname	CRT4
+4	 UseChannel		false
+4	 ChannelNickname	Anode2
 4	 ChannelPolarity	1
 4	 ChannelRange		1.0
 4	 ChannelOffset		-0.4
 4	 TriggerLevel		-0.1
-4	 TriggerSlope		0
-4	 ActiveTrigger	        false	
+4	 TriggerSlope		1
+4	 ActiveTrigger		false
 
 5 	 UseChannel		false
-5	 ChannelNickname	Trigger
+5	 ChannelNickname	ShapedPMT
 5	 ChannelPolarity	1
 5	 ChannelRange		1
-5	 ChannelOffset		0
-5	 TriggerLevel		-0.05
-5	 TriggerSlope		0
+5	 ChannelOffset		0.4
+5	 TriggerLevel		0.01
+5	 TriggerSlope		1
 5	 ActiveTrigger		false
 
-6	 UseChannel		false
+6	 UseChannel		true
 6	 ChannelNickname	RawPMT
 6	 ChannelPolarity	1
 6	 ChannelRange		0.25
 6	 ChannelOffset		-0.1
 6	 TriggerLevel		-0.002
 6	 TriggerSlope		1
-6	 ActiveTrigger		false (PMT=true)
+6	 ActiveTrigger		true (PMT=true)
 
 7	 UseChannel		false
 7	 ChannelNickname	ShapedA2

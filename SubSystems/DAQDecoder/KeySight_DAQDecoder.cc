@@ -123,7 +123,6 @@ int main(int argc, char* argv[]){
         return 1;
     }
   }
-  
   run(fname,chans,draw,fVerbose,num_events);
   return 0;
 }
@@ -132,8 +131,6 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
 {
   // 1=GPM_Anode1,2=GPM_Anode2,3=GPM_Top1,4=GPM_Top2,5=PMT_Raw,6=PMT_Shaped
   
-  
-
   gROOT->SetBatch(kTRUE);
   
   int ret = 0;
@@ -344,20 +341,26 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
 	    pedhist_map1[chans[ichan]]->Draw();
 	  }
 	  
-	  float ped_RMS = pedhist_map1[chans[ichan]]->GetRMS();
-	  float ped_mode = pedhist_map1[chans[ichan]]->GetXaxis()->GetBinCenter(pedhist_map1[chans[ichan]]->GetMaximumBin());
+	  float ped_entries = pedhist_map1[chans[ichan]]->GetEntries();
+	  float ped_RMS     = pedhist_map1[chans[ichan]]->GetRMS();
+	  float ped_mode    = pedhist_map1[chans[ichan]]->GetXaxis()->GetBinCenter(pedhist_map1[chans[ichan]]->GetMaximumBin());
 	
 	  //Fit a Gaussian to the pedestal 
 	  TF1 *ped_fit = new TF1("ped_fit","gaus");
-	  ped_fit->SetParameter(1,ped_RMS);
+	  //ped_fit->SetParameter(0,ped_entries/2.);
+	  ped_fit->SetParameter(1,ped_mode);
+	  ped_fit->SetParameter(2,ped_RMS);
+	  ped_fit->SetParLimits(0,0,ped_entries);
 	  ped_fit->SetParLimits(1,min_ped,max_ped);
-	
+	  ped_fit->SetParLimits(2,0.2,3*ped_RMS);
 	  //std::cout << "test1" << std::endl;
-	  pedhist_map1[chans[ichan]]->Fit(ped_fit,"Q");
+	  pedhist_map1[chans[ichan]]->Fit(ped_fit,"BQ");
 	  //std::cout << "test2" << std::endl;
 	  float ped_fit_mean = ped_fit->GetParameter(1);
 	  float ped_fit_stddev = ped_fit->GetParameter(2);
-	  
+	 
+	  //std::cout<<"Mean: "<< ped_fit_mean <<"and std. dev."<<ped_fit_stddev<<std::endl;
+ 
 	  std::string pedhist2_string = "ped_h2 " + std::to_string(chans[ichan]);
 	  const char* pedhist2_name = pedhist2_string.c_str();
 	  pedhist_map2[chans[ichan]] = new TH1I(pedhist2_name,"Reduced Pedestal Histogram",TMath::Abs(max_ped-min_ped)+1,min_ped-0.5,max_ped+0.5);
@@ -380,25 +383,30 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
 	    canv->Update();
 	    fileout->cd();
 	  }
-
-	  //Fit the second pedestal graph 
+	
+	  if ( pedhist_map1[chans[ichan]]->GetEntries() ==0 || pedhist_map2[chans[ichan]]->GetEntries()==0) { 
+            std::cout<<"PedFit Entries: "<<pedhist_map1[chans[ichan]]->GetEntries() <<" and PedFit2: "<<pedhist_map2[chans[ichan]]->GetEntries()<<std::endl;
+	    std::cout<<"Mode: "<<ped_mode<<" and mean: "<<ped_fit_mean<<" and RMS: "<<ped_RMS<<" and std. dev: "<<ped_fit_stddev<<std::endl;
+	    std::cout<<"Low limit: "<<min_ped<<" high limit "<<max_ped<<" TEST"<<std::endl;
+          }	  
+	//Fit the second pedestal graph 
 	  TF1 *ped_fit2 = new TF1("ped_fit2","gaus");
 	  ped_fit2->SetParameter(1,ped_fit_mean);
 	  ped_fit2->SetParLimits(1,min_ped,max_ped);
 	  ped_fit2->SetParameter(2,ped_fit_stddev);
 	  //std::cout << "test3" << std::endl;
-	  pedhist_map2[chans[ichan]]->Fit(ped_fit2,"Q");
+	  pedhist_map2[chans[ichan]]->Fit(ped_fit2,"BQ");
 	  //std::cout << "test4" << std::endl;
-	  if(fVerbose){
-	    std::cout << "First Mode: " << ped_mode << "second mode: " << pedhist_map2[chans[ichan]]->GetXaxis()->GetBinCenter(pedhist_map2[chans[ichan]]->GetMaximumBin()) << " baseAdc: " << ped_fit2->GetParameter(1);		    
-	  }
+	  //if(fVerbose){
+	  //  std::cout << "First Mode: " << ped_mode <<" second mode: " << pedhist_map2[chans[ichan]]->GetXaxis()->GetBinCenter(pedhist_map2[chans[ichan]]->GetMaximumBin()) << " baseAdc: " << ped_fit2->GetParameter(1)<<std::endl;		    
+	  //}
 	  
 	  baseAdc = ped_fit2->GetParameter(1);
 	  baseAdcrms = ped_fit2->GetParameter(2);
 	  
 	  ped_fit->Delete();
 	  ped_fit2->Delete();
-	  
+ 
 	  //Check to see if the signal was positive or negative 
 	  if(TMath::Abs(maximum - baseAdc) > TMath::Abs(minimum - baseAdc)){peaktimeTdc = maxpeaktime;}
 	  else{peaktimeTdc = minpeaktime;}
