@@ -2,7 +2,7 @@ SHELL = /bin/sh
 
 include ../../makeconfig.mk
 
-DEPS        = ./Event.h ./ChannelInfo.h /home/argonshef/CAENDAQ/PixelDAQ/include/PixelReadout.hh
+DEPS        = ./Event.h ./ChannelInfo.h /home/argonshef/CAENDAQ/PixelDAQ/include/PixelReadout.hh /home/argonshef/CAENDAQ/PixelDAQ/include/ChannelMap.hh
 SRCFILES    = PixelTPC_DAQDecoder.cc
 OBJFILES    = $(patsubst %.cc, $(OBJDIR)/%.so, $(SRCFILES))
 EXECUTABLES = $(patsubst %.cc, $(OUTDIR)/%, $(SRCFILES))

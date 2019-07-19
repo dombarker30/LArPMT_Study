@@ -11,6 +11,7 @@
 
 //DAQ Includes 
 #include "/home/argonshef/CAENDAQ/PixelDAQ/include/PixelReadout.hh"
+#include "/home/argonshef/CAENDAQ/PixelDAQ/include/ChannelMap.hh"
 
 //Analysis Includes 
 #include "Event.h"

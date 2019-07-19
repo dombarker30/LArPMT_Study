@@ -73,7 +73,7 @@ namespace ROOT {
       return GenerateInitInstanceLocal((::PixelData::SubSystems::ChannelInfo*)0);
    }
    // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_(Init) = GenerateInitInstanceLocal((const ::PixelData::SubSystems::ChannelInfo*)0x0); R__UseDummy(_R__UNIQUE_(Init));
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::PixelData::SubSystems::ChannelInfo*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
 
    // Dictionary for non-ClassDef classes
    static TClass *PixelDatacLcLSubSystemscLcLChannelInfo_Dictionary() {
@@ -118,7 +118,7 @@ namespace ROOT {
       return GenerateInitInstanceLocal((::PixelData::SubSystems::Event*)0);
    }
    // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_(Init) = GenerateInitInstanceLocal((const ::PixelData::SubSystems::Event*)0x0); R__UseDummy(_R__UNIQUE_(Init));
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::PixelData::SubSystems::Event*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
 
    // Dictionary for non-ClassDef classes
    static TClass *PixelDatacLcLSubSystemscLcLEvent_Dictionary() {
@@ -202,7 +202,7 @@ namespace ROOT {
       return &instance;
    }
    // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_(Init) = GenerateInitInstanceLocal((const vector<float>*)0x0); R__UseDummy(_R__UNIQUE_(Init));
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<float>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
 
    // Dictionary for non-ClassDef classes
    static TClass *vectorlEfloatgR_Dictionary() {
@@ -265,7 +265,7 @@ namespace ROOT {
       return &instance;
    }
    // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_(Init) = GenerateInitInstanceLocal((const vector<PixelData::SubSystems::ChannelInfo>*)0x0); R__UseDummy(_R__UNIQUE_(Init));
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<PixelData::SubSystems::ChannelInfo>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
 
    // Dictionary for non-ClassDef classes
    static TClass *vectorlEPixelDatacLcLSubSystemscLcLChannelInfogR_Dictionary() {
@@ -308,7 +308,7 @@ namespace {
 0
     };
     static const char* includePaths[] = {
-"/home/argonshef/root-6.08.00/builddir/include",
+"/home/argonshef/root/build/include",
 "/home/argonshef/LArAnalysis/srcs/SubSystems/CRT/",
 0
     };

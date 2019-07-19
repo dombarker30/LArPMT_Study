@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
 #Setup the directories
-export LArAnASRCDir=$(dirname "$(realpath $_)")
-export LArANAOBJDir=$LArAnASRCDir/../build/obj
-export LArANAEXEDir=$LArAnASRCDir/../build/exe
-export LArANABUILDDIR=$LArAnASRCDir/../build
+export LArANASRCDir=$(dirname "$(realpath $BASH_SOURCE)")
+export LArANAOBJDir=$LArANASRCDir/../build/obj
+export LArANAEXEDir=$LArANASRCDir/../build/exe
+export LArANABUILDDIR=$LArANASRCDir/../build
 
 
  #Setup the installer
 larinstall(){
     current_dir=$PWD;
-    cd $LArAnASRCDir; 
+    cd $LArANASRCDir; 
     make;
     cd $current_dir;
     lartillclean
@@ -19,7 +19,7 @@ larinstall(){
 #Setup the uninstaller
 laruninstall(){
 echo "You Fool. You cannot uninstall me"
-#    rm -rf $LArAnASRCDir;
+#    rm -rf $LArANASRCDir;
 #    rm -rf $LArANABUILDDIR;
 }
 

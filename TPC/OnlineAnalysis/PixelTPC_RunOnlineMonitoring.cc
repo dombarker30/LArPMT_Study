@@ -1,5 +1,4 @@
-
-//Decoder Includes                                                                                                                         
+//Decoder Includes        
 #include "../DAQDecoder/Event.h"
 #include "../DAQDecoder/ChannelInfo.h"
 #include "../OnlineAnalysis/OnlineMonitor.hh"
@@ -151,10 +150,10 @@ int AnalysisExample(std::string& filename){
       //PixelData::TPC::OnlineMonitor online = PixelData::TPC::RunOffline(Waveform,false,true);
       
       //if (channel->GetChannelNumber()<25 && event->GetEventNumber()==99) {
-	std::cout<<"Channel: "<<channel->GetChannelNumber()<<std::endl;
-	std::string test = "test";
-	auto t1 = std::chrono::high_resolution_clock::now();
-	PixelData::TPC::OnlineMonitor online2 = PixelData::TPC::RunOffline(Waveform,channel->GetChannelNumber(),test,event->GetEventNumber(), event->GetTimeStamp(),true,false,true);
+      //	std::cout<<"Channel: "<<channel->GetChannelNumber()<<std::endl;
+      std::string test = "test";
+      auto t1 = std::chrono::high_resolution_clock::now();
+      PixelData::TPC::OnlineMonitor online2 = PixelData::TPC::RunOffline(Waveform,event->GetEventNumber(),channel->GetChannelNumber(),test, event->GetTimeStamp(),true,false,true);
 	auto t2 = std::chrono::high_resolution_clock::now();
 	
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();

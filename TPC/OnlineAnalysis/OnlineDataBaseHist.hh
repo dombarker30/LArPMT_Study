@@ -28,6 +28,9 @@
 #include "TMultiGraph.h"
 #include "TCanvas.h" 
 
+//Channel Map
+#include "/home/argonshef/CAENDAQ/PixelDAQ/include/ChannelMap.hh"
+
 namespace PixelData{
   namespace OnlineMointoring{ 
 

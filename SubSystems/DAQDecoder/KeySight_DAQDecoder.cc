@@ -455,9 +455,8 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
 	    int   tick    = 0;
 	    std::vector<float> wf_vals = {0,0,0,0,0};
 	    while(TMath::Abs(wf_avg-baseAdc) > 3*baseRmsAdc || tick<5){
-	      int i        = tick%5;
-	      wf_vals[i] = wf[peaktimeTdc - tick];
-	      wf_avg       = TMath::Mean(wf_vals.begin(),wf_vals.end());
+	      wf_vals[tick%5] = wf[peaktimeTdc - tick];
+	      wf_avg          = TMath::Mean(wf_vals.begin(),wf_vals.end());
 	      ++tick;
 	      //std::cout<<"I: "<<i<<" tick: "<<tick<<" wf_avg:i "<<wf_avg<<std::endl;
 	    }
@@ -470,9 +469,8 @@ int run(std::string filename, std::vector<int> chans, bool draw, bool fVerbose, 
 	    wf_vals.clear();
 	    wf_vals = {0,0,0,0,0};
 	    while(TMath::Abs(wf_avg-baseAdc) > 3*baseRmsAdc || tick<5){
-	      int i        = tick%5;
-	      wf_vals[i] = wf[peaktimeTdc + tick];
-	      wf_avg       = TMath::Mean(wf_vals.begin(),wf_vals.end());
+	      wf_vals[tick%5] = wf[peaktimeTdc + tick];
+	      wf_avg          = TMath::Mean(wf_vals.begin(),wf_vals.end());
 	      ++tick;
 	    }
 	    integration_cut = peaktimeTdc + tick + 300;

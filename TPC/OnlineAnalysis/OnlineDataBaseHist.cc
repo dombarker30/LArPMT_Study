@@ -121,15 +121,15 @@ void PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigures(float time_avg
       int         channel         = c[2].as<int>();
       int         timestampsecond = c[0].as<int>();
       
-      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[0],c[0].as<int>(),channel);
-      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[1],c[1].as<int>(),channel);
-      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[2],c[2].as<int>(),channel);
-      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[3],c[3].as<float>(),channel);
-      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[4],c[4].as<int>(),channel);
-      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[5],c[5].as<float>(),channel);
-      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[6],c[6].as<float>(),channel);
-      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[7],c[7].as<float>(),channel);
-      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[8],c[8].as<float>(),channel);
+      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[0],c[0].as<int>(), channelID, channel);
+      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[1],c[1].as<int>(), channelID, channel);
+      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[2],c[2].as<int>(), channelID, channel);
+      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[3],c[3].as<float>(), channelID, channel);
+      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[4],c[4].as<int>(), channelID, channel);
+      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[5],c[5].as<float>(), channelID, channel);
+      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[6],c[6].as<float>(), channelID, channel);
+      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[7],c[7].as<float>(), channelID, channel);
+      PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(MetricNames[8],c[8].as<float>(), channelID, channel);
       
       //Lets not do it forever please
       if(timestampsecond < (latest_timestamp - time_avg)){break;}
@@ -163,7 +163,7 @@ void PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(std::string Met
 };
 
 //Fill the histograms 
-void PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(std::string MetricName, float value, std::String channelID, int channel){
+void PixelData::OnlineMointoring::OnlineDataBaseHist::FillFigure(std::string MetricName, float value, std::string channelID, int channel){
 
   //Check to see if its an ROI or Pixel 
   int chanStrLength = channelID.size();
@@ -349,10 +349,12 @@ void PixelData::OnlineMointoring::OnlineDataBaseHist::PlotFigure(std::string Met
     Metrics_Graph_ChanMap[i][MetricName]->Write();
 
     //use the channel map to find if ROI or PPixels 
-    std::string channelID = DAQ::ChannelMap::GetChannelID(ch+1, channelMap);
+    std::map<int,std::string> channelMap = DAQ::ChannelMap::InitChannelMap();
+    std::string channelID = DAQ::ChannelMap::GetChannelID(i+1, channelMap);
+    std::size_t found_pixel = channelID.find("Pixel");
 
     //Add to the MultiGraph 
-    if(i<36){
+    if(found_pixel != std::string::npos){
       MetricsPixels_MultiGraph_Map[MetricName]->Add(Metrics_Graph_ChanMap[i][MetricName]);
     }
     else{
