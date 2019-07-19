@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
       std::string MetricName = Metrics[j];
 
       //Do the Pixel average  
-      std::string sql_create_avgpixelstable ="CREATE TABLE OnlineParamsAvgPixels" + MetricName +  "pixels (mean float , RMS float , timeavg float, timerms float);"; 
+      std::string sql_create_avgpixelstable ="CREATE TABLE OnlineParamsAvgPixels" + MetricName +  " (mean float , RMS float , timeavg float, timerms float);"; 
       sql = sql_create_avgpixelstable.c_str();
       std::cout << sql << std::endl;
       pqxx::work wp(C);
@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
       std::cout << "Table created" << std::endl;
 
       //Do the Roi average  
-      std::string sql_create_avgroistable ="CREATE TABLE OnlineParamsAvgROIs" + MetricName +  "rois (mean float , RMS float , timeavg float, timerms float);"; 
+      std::string sql_create_avgroistable ="CREATE TABLE OnlineParamsAvgROIs" + MetricName +  " (mean float , RMS float , timeavg float, timerms float);"; 
       sql = sql_create_avgroistable.c_str();
       std::cout << sql << std::endl;
       pqxx::work wr(C);

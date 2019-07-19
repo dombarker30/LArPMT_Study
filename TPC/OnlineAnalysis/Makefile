@@ -2,7 +2,7 @@ SHELL = /bin/sh
 
 include ../../makeconfig.mk
 
-DEPS        = OnlineDataBaseHist.hh OnlineMonitor.hh  ../DAQDecoder/Event.h ../DAQDecoder/ChannelInfo.h /home/argonshef/CAENDAQ/PixelDAQ/include/ChannelMap.hh  
+DEPS        = OnlineDataBaseHist.hh OnlineMonitor.hh  ../DAQDecoder/Event.h ../DAQDecoder/ChannelInfo.h /home/argonshef/CAENDAQ/PixelDAQ/include/ChannelMap.hh OnlineDataBase.hh 
 SRCFILES    = GetOnlineParams.cc PixelTPC_RunOnlineMonitoring.cc BuildDataBaseTables.cc
 OBJFILES    = $(patsubst %.cc, $(OBJDIR)/%.so, $(SRCFILES))
 EXECUTABLES = $(patsubst %.cc, $(OUTDIR)/%, $(SRCFILES))
@@ -11,7 +11,7 @@ all: $(EXECUTABLES)
 
 .PRECIOUS: $(OBJFILES)
 
-$(OBJDIR)/%.so: %.cc $(DEPS) ../OnlineAnalysis/OnlineDataBaseHist.cc OnlineMonitor.cc ../DAQDecoder/EventDict.cxx ../DAQDecoder/ChannelInfo.c /home/argonshef/CAENDAQ/PixelDAQ/srcs/ChannelMap.cc
+$(OBJDIR)/%.so: %.cc $(DEPS) ../OnlineAnalysis/OnlineDataBaseHist.cc OnlineMonitor.cc ../DAQDecoder/EventDict.cxx ../DAQDecoder/ChannelInfo.c /home/argonshef/CAENDAQ/PixelDAQ/srcs/ChannelMap.cc OnlineDataBase.cc
 	@echo Building Objectfile $@
 	@mkdir -p $(@D)
 	@$(CXX) $(SOFLAGS) $(CXXFLAGS) -o $@ -I$(ROOTSYS)/include $(SQL) $^ $(LIBS)

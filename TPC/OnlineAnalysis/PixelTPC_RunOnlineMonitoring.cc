@@ -16,7 +16,11 @@
 #include <vector>
 #include <iostream>
 #include <chrono>
-int AnalysisExample(std::string& filename);
+
+//Database Include
+#include "./OnlineDataBase.hh"
+
+int OnlineMonitorTest(std::string& filename);
 
 int main(int argc, char* argv[]){
 
@@ -63,7 +67,7 @@ int main(int argc, char* argv[]){
       return 1;
     }  
     
-    int err = AnalysisExample(inputfiles[i]);
+    int err = OnlineMonitorTest(inputfiles[i]);
 
     if(err != 0){
       std::cerr << "Error in analysis" << std::endl;
@@ -96,7 +100,7 @@ int main(int argc, char* argv[]){
 	    return 1;
 	  }  
 
-	  int err = AnalysisExample(inputfile);
+	  int err = OnlineMonitorTest(inputfile);
 	  if(err != 0){
 	    std::cerr << "Error in analysis" << std::endl;
 	    return 1;
@@ -112,7 +116,7 @@ int main(int argc, char* argv[]){
 }
 
   
-int AnalysisExample(std::string& filename){
+int OnlineMonitorTest(std::string& filename){
 
   //File Inputs
   const char* filechar = filename.c_str();
@@ -158,6 +162,11 @@ int AnalysisExample(std::string& filename){
 	
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
 	std::cout << "Channel Time taken: " << duration << std::endl;
+
+	//Send to database
+	PixelData::OnlineMointoring::OnlineDataBase OnlineDataBase;
+	int err = OnlineDataBase.SendToDatabase(online2);
+	if(err != 0){std::cout << "failed to send to database" << std::endl;}
 
 	int peaks = online2.GetNumHits();
 	//std::cout<<peaks<<std::endl;

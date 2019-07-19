@@ -178,7 +178,7 @@ PixelData::TPC::OnlineMonitor  PixelData::TPC::RunPeaks(const std::vector<int> &
 	  }
       } 
     // End Peak if wfm drops below threshold
-    else if (isPeak && (abs(PedStartMean-wfm.at(i))<(1*PedStartRMS)))
+    else if (isPeak && (abs(PedStartMean-wfm.at(i))<(5*PedStartRMS)))
       {
 	PeakSum  += PeakHeight;  
         PeakCounter++;

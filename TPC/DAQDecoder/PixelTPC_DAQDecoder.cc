@@ -34,7 +34,7 @@
 int MakerootFile(std::string& filename);
 
 int main(int argc, char* argv[]){
-
+  std::cout<<"test"<<std::endl;
   std::vector<std::string> inputfiles;
   std::vector<std::string> txtfiles;
   
@@ -130,7 +130,7 @@ int MakerootFile(std::string& filename){
   //######################
   //### Initialisation ###
   //######################
-
+  std::cout<<"TEST"<<std::endl;
   gROOT->SetBatch(kTRUE);
 
   size_t suff = filename.find(".");
