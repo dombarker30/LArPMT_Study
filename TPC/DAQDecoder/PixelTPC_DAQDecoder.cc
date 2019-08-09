@@ -34,7 +34,7 @@
 int MakerootFile(std::string& filename);
 
 int main(int argc, char* argv[]){
-  std::cout<<"test"<<std::endl;
+
   std::vector<std::string> inputfiles;
   std::vector<std::string> txtfiles;
   
@@ -130,7 +130,6 @@ int MakerootFile(std::string& filename){
   //######################
   //### Initialisation ###
   //######################
-  std::cout<<"TEST"<<std::endl;
   gROOT->SetBatch(kTRUE);
 
   size_t suff = filename.find(".");
@@ -180,7 +179,7 @@ int MakerootFile(std::string& filename){
     
       // Set the event number and timestamp.
       Events[eventheader->EventNumber] = new PixelData::TPC::Event();
-      Events[eventheader->EventNumber]->SetTimestamp(eventheader->Timestamp);
+      Events[eventheader->EventNumber]->SetTimestamp(eventheader->Timestamp_s);
       Events[eventheader->EventNumber]->SetEventNumber(eventheader->EventNumber);
     }
 

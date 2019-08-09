@@ -15,6 +15,7 @@
 #include <iostream>
 #include <stdlib.h> 
 #include <string>
+#include <ctime>
 
 //Postgres Includes
 #include <pqxx/pqxx> 
@@ -24,8 +25,16 @@
 
 int main(int argc, char* argv[]) {
 
+  if(argc != 3){
+    std::cerr << "please give one input and that is the time you want to average over in mins and the time in hours you want to go back in" << std::endl;
+    return 1;
+  }
+
   //Get the time in mins you want to average over and make the histograms. 
   float time_avg = std::atoi(argv[1])*60;
+
+  //Get the time to go back in hours 
+  uint32_t time =  std::atoi(argv[2])*60*60;
 
   //Get the database 
   try {
@@ -36,6 +45,7 @@ int main(int argc, char* argv[]) {
       std::cout << "Can't open database" << std::endl;
       return 1;
     }
+
     
     //Create a non-transactional object. 
     pqxx::nontransaction N(C);
@@ -43,28 +53,41 @@ int main(int argc, char* argv[]) {
     //Initalise the Online Mointoring database class.
     PixelData::OnlineMointoring::OnlineDataBaseHist OnlineHistograms;
 
-    //Initalise the Online Figures.
-    OnlineHistograms.InitialiseFigure("timestampsecond","Time Stampstamp (s)",100,0,1);
-    OnlineHistograms.InitialiseFigure("timestampnanosecond","Nanosecond in the timestamp",100,0,1);
-    OnlineHistograms.InitialiseFigure("channel","Channel Number",64,0,64);
-    OnlineHistograms.InitialiseFigure("eventnumber", "Event Number",100,0,100);
-    OnlineHistograms.InitialiseFigure("averagepeakheightpixels","Average Peak Height Pixels",100,0,100);
-    OnlineHistograms.InitialiseFigure("maxpeakheightpixels","Max Peak Height (ADC)",100,0,100);
-    OnlineHistograms.InitialiseFigure("rmspixels","RMS (ADC)",50,0,5);
-    OnlineHistograms.InitialiseFigure("baselinepixels","Baseline (ADC)",50,0,10);
-    OnlineHistograms.InitialiseFigure("numberhitspixels","Hit Number",50,0,50);
-    
-    //Get the most recent timestamp to work back from. 
-    int latesttimestamp = OnlineHistograms.LastestTimeStamp(N);
+    OnlineHistograms.InitialiseLimits("timestampsecond");
+    OnlineHistograms.InitialiseLimits("timestampnanosecond");
+    OnlineHistograms.InitialiseLimits("channel");
+    OnlineHistograms.InitialiseLimits("avgpeakheight");
+    OnlineHistograms.InitialiseLimits("maxpeakheight");
+    OnlineHistograms.InitialiseLimits("rms");
+    OnlineHistograms.InitialiseLimits("baseline");
+    OnlineHistograms.InitialiseLimits("numhits");
 
+    //Get the most recent timestamp to work back from. 
+    int latesttimestamp =  std::time(nullptr);
+    
     //Get the metric vector.
     std::vector<std::string> MetricVector = OnlineHistograms.GetMetricVector();
 
+    //Get the limits 
+    OnlineHistograms.GetAllLimits(time_avg,latesttimestamp,MetricVector,N);
+
+    //Initalise the Online Figures.
+    OnlineHistograms.InitialiseFigure("timestampsecond","Time Stampstamp (s)");
+    OnlineHistograms.InitialiseFigure("timestampnanosecond","Nanosecond in the timestamp");
+    OnlineHistograms.InitialiseFigure("channel","Channel Number");
+    OnlineHistograms.InitialiseFigure("avgpeakheight","Average Peak Height");
+    OnlineHistograms.InitialiseFigure("maxpeakheight","Max Peak Height (ADC)");
+    OnlineHistograms.InitialiseFigure("rms","RMS (ADC)");
+    OnlineHistograms.InitialiseFigure("baseline","Baseline (ADC)");
+    OnlineHistograms.InitialiseFigure("numhits","Hit Number");
+    
     //Fill the figures 
     OnlineHistograms.FillFigures(time_avg,latesttimestamp,MetricVector,N);
 
+    N.commit();
+
     //Plot the figures 
-    OnlineHistograms.PlotFigures(MetricVector,C);
+    OnlineHistograms.PlotFigures(MetricVector,C,time);
 
   }
   catch(const std::exception &e){     

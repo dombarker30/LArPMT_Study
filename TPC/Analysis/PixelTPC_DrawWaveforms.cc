@@ -23,21 +23,23 @@
 //Keyboard hit 
 #include "keyb.h"
 
-int DrawWaveforms(std::string& filename);
+int DrawWaveforms(std::string& filename, bool fSave);
 
 int main(int argc, char* argv[]){
 
   std::vector<std::string> inputfiles;
   std::vector<std::string> txtfiles;
 
+  bool fSave = false;
+
   int process_events = -1; 
 
   int c;
 
-  gStyle->SetTitleW(0.6);
+  //  gStyle->SetTitleW(0.6);
 
   //Check to see if a input file is a .root (i) or a .txt file (s) or both 
-  while ((c=getopt(argc, argv, "i:s:n:")) != -1){
+  while ((c=getopt(argc, argv, "i:s:n:save:")) != -1){
     switch (c) {
     case 'i':
       inputfiles.push_back(optarg);
@@ -47,6 +49,8 @@ int main(int argc, char* argv[]){
       break;
     case 'n':
       process_events = std::stoi(optarg);
+    case 'save':
+      fSave = true;
     default:
       std::cerr << "You must give an input file" << std::endl; 
       return 1;
@@ -80,7 +84,7 @@ int main(int argc, char* argv[]){
     }  
 
     TApplication theApp("App",&argc, argv);    
-    int err = DrawWaveforms(inputfiles[i]);
+    int err = DrawWaveforms(inputfiles[i],fSave);
 
     if(err != 0){
       std::cerr << "Error in analysis" << std::endl;
@@ -114,7 +118,7 @@ int main(int argc, char* argv[]){
 	  }  
 
 	  TApplication theApp("App",&argc, argv);
-	  int err = DrawWaveforms(inputfile);
+	  int err = DrawWaveforms(inputfile,fSave);
 
 	  if(err != 0){
 	    std::cerr << "Error in analysis" << std::endl;
@@ -131,7 +135,7 @@ int main(int argc, char* argv[]){
 }
 
   
-int DrawWaveforms(std::string& filename){
+int DrawWaveforms(std::string& filename, bool fSave){
 
   //File Inputs
   const char* filechar = filename.c_str();
@@ -146,10 +150,18 @@ int DrawWaveforms(std::string& filename){
   //Map of the channel waveforsm
   std::map<std::string,TGraph*> WaveformGraph;
 
+  //Output file
+  size_t suff = filename.find(".");  
+  TFile * outputfile;
+  if(fSave) outputfile = new TFile(TString::Format("%s_Draw.root",filename.substr(0,suff).c_str()),"RECREATE");
+
+
   //Event loop 
   int i=0;
 
   while(true){
+
+    inputfile->cd();
     
     //Get the Event Information
     std::cout << "i: " << i << std::endl;
@@ -174,17 +186,19 @@ int DrawWaveforms(std::string& filename){
       const std::vector<int> Waveform = channel->GetWaveform();
       
       //Create the histograms
-      std::string Graph_string = "Waveform Channel: " + channel->GetChannelID() + ";time (tick);ADC";
+      std::string Graph_string = "Waveform Channel: " + channel->GetChannelID();
       const char* Graph_name = Graph_string.c_str();
       WaveformGraph[Graph_string]  = new TGraph();
       WaveformGraph[Graph_string]->SetTitle(Graph_name);
-      WaveformGraph[Graph_string]->GetXaxis()->SetTickSize(0.01);
-      WaveformGraph[Graph_string]->GetXaxis()->SetTitleSize(0.9);
-      WaveformGraph[Graph_string]->GetXaxis()->SetLabelSize(0.9);
-      WaveformGraph[Graph_string]->GetYaxis()->SetTickSize(0.01);
-      WaveformGraph[Graph_string]->GetYaxis()->SetTitleSize(0.9);
-      WaveformGraph[Graph_string]->GetYaxis()->SetLabelSize(0.6);
-      WaveformGraph[Graph_string]->GetYaxis()->SetLabelOffset(0.05);
+      WaveformGraph[Graph_string]->GetXaxis()->SetTitle("Time (tick)");
+      WaveformGraph[Graph_string]->GetYaxis()->SetTitle("Amplitude (ADC)");
+      // WaveformGraph[Graph_string]->GetXaxis()->SetTickSize(0.01);
+      // WaveformGraph[Graph_string]->GetXaxis()->SetTitleSize(0.9);
+      // WaveformGraph[Graph_string]->GetXaxis()->SetLabelSize(0.9);
+      // WaveformGraph[Graph_string]->GetYaxis()->SetTickSize(0.01);
+      // WaveformGraph[Graph_string]->GetYaxis()->SetTitleSize(0.9);
+      // WaveformGraph[Graph_string]->GetYaxis()->SetLabelSize(0.6);
+      // WaveformGraph[Graph_string]->GetYaxis()->SetLabelOffset(0.05);
       
       //Decide where the histogram should 
       std::string channelID = channel->GetChannelID();
@@ -198,7 +212,7 @@ int DrawWaveforms(std::string& filename){
 	int chanNum = std::stoi(channelID.substr(3,chanStrLength-1));
         (TPad*) c->cd(chanNum*2);
       }
-      
+
       for(int adc_it=0; adc_it<NADC; ++adc_it){
 	WaveformGraph[Graph_string]->SetPoint(WaveformGraph[Graph_string]->GetN(),adc_it,Waveform[adc_it]);
       }
@@ -212,6 +226,11 @@ int DrawWaveforms(std::string& filename){
     c->Draw("a");
     gPad->Modified();
     gPad->Update();
+
+    if(fSave){ 
+      outputfile->cd();
+      c->Write();
+    }
 
     std::cout << "Event Complete" << std::endl;
 

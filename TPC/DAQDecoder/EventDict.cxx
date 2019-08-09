@@ -40,6 +40,7 @@ namespace std {} using namespace std;
 #include "Event.h"
 #include "ChannelInfo.h"
 #include "/home/argonshef/CAENDAQ/PixelDAQ/include/PixelReadout.hh"
+#include "/home/argonshef/CAENDAQ/PixelDAQ/include/ChannelMap.hh"
 
 // Header files passed via #pragma extra_include
 
@@ -74,7 +75,7 @@ namespace ROOT {
       return GenerateInitInstanceLocal((::PixelData::TPC::ChannelInfo*)0);
    }
    // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_(Init) = GenerateInitInstanceLocal((const ::PixelData::TPC::ChannelInfo*)0x0); R__UseDummy(_R__UNIQUE_(Init));
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::PixelData::TPC::ChannelInfo*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
 
    // Dictionary for non-ClassDef classes
    static TClass *PixelDatacLcLTPCcLcLChannelInfo_Dictionary() {
@@ -119,7 +120,7 @@ namespace ROOT {
       return GenerateInitInstanceLocal((::PixelData::TPC::Event*)0);
    }
    // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_(Init) = GenerateInitInstanceLocal((const ::PixelData::TPC::Event*)0x0); R__UseDummy(_R__UNIQUE_(Init));
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::PixelData::TPC::Event*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
 
    // Dictionary for non-ClassDef classes
    static TClass *PixelDatacLcLTPCcLcLEvent_Dictionary() {
@@ -203,7 +204,7 @@ namespace ROOT {
       return &instance;
    }
    // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_(Init) = GenerateInitInstanceLocal((const vector<unsigned int>*)0x0); R__UseDummy(_R__UNIQUE_(Init));
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<unsigned int>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
 
    // Dictionary for non-ClassDef classes
    static TClass *vectorlEunsignedsPintgR_Dictionary() {
@@ -266,7 +267,7 @@ namespace ROOT {
       return &instance;
    }
    // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_(Init) = GenerateInitInstanceLocal((const vector<int>*)0x0); R__UseDummy(_R__UNIQUE_(Init));
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<int>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
 
    // Dictionary for non-ClassDef classes
    static TClass *vectorlEintgR_Dictionary() {
@@ -329,7 +330,7 @@ namespace ROOT {
       return &instance;
    }
    // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_(Init) = GenerateInitInstanceLocal((const vector<PixelData::TPC::ChannelInfo>*)0x0); R__UseDummy(_R__UNIQUE_(Init));
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<PixelData::TPC::ChannelInfo>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
 
    // Dictionary for non-ClassDef classes
    static TClass *vectorlEPixelDatacLcLTPCcLcLChannelInfogR_Dictionary() {
@@ -370,10 +371,11 @@ namespace {
 "Event.h",
 "ChannelInfo.h",
 "/home/argonshef/CAENDAQ/PixelDAQ/include/PixelReadout.hh",
+"/home/argonshef/CAENDAQ/PixelDAQ/include/ChannelMap.hh",
 0
     };
     static const char* includePaths[] = {
-"/home/argonshef/root-6.08.00/builddir/include",
+"/home/argonshef/root/build/include",
 "/home/argonshef/LArAnalysis/srcs/TPC/DAQDecoder/",
 0
     };
@@ -383,7 +385,7 @@ namespace {
 #pragma clang diagnostic ignored "-Wignored-attributes"
 #pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
 extern int __Cling_Autoloading_Map;
-namespace PixelData{namespace TPC{class __attribute__((annotate("$clingAutoload$Event.h")))  ChannelInfo;}}
+namespace PixelData{namespace TPC{class __attribute__((annotate("$clingAutoload$ChannelInfo.h")))  __attribute__((annotate("$clingAutoload$Event.h")))  ChannelInfo;}}
 namespace PixelData{namespace TPC{class __attribute__((annotate("$clingAutoload$Event.h")))  Event;}}
 )DICTFWDDCLS";
     static const char* payloadCode = R"DICTPAYLOAD(
@@ -397,6 +399,7 @@ namespace PixelData{namespace TPC{class __attribute__((annotate("$clingAutoload$
 #include "Event.h"
 #include "ChannelInfo.h"
 #include "/home/argonshef/CAENDAQ/PixelDAQ/include/PixelReadout.hh"
+#include "/home/argonshef/CAENDAQ/PixelDAQ/include/ChannelMap.hh"
 
 #undef  _BACKWARD_BACKWARD_WARNING_H
 )DICTPAYLOAD";

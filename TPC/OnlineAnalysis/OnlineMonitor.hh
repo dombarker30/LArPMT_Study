@@ -18,9 +18,9 @@ namespace PixelData{
       
       OnlineMonitor();
       ~OnlineMonitor(){};
-      OnlineMonitor(int Channel, std::string ChannelID, float Baseline, float BaseRMS, float AvgPeakHeight, float MaxPeakHeight, int MaxPeakTime, int NumHits,int EventNum, int TimeStampS, int TimeStampN);
+      OnlineMonitor(int Channel, std::string ChannelID, float Baseline, float BaseRMS, float AvgPeakHeight, float MaxPeakHeight, int MaxPeakTime, int NumHits,int EventNum, long int TimeStampS, long int TimeStampN);
 
-      OnlineMonitor(int Channel, std::string ChannelID, float Baseline, float BaseRMS,int EventNum, int TimeStampS, int TimeStampN);
+      OnlineMonitor(int Channel, std::string ChannelID, float Baseline, float BaseRMS,int EventNum);
 
 
       const int              GetChannel()       const {return Channel;};
@@ -32,8 +32,11 @@ namespace PixelData{
       const float            GetMaxPeakTime()   const {return MaxPeakTime;};
       const int              GetNumHits()       const {return NumHits;};
       const int              GetEventNum()      const {return EventNum;};
-      const int              GetTimeStampS()    const {return TimeStampS;};
-      const int              GetTimeStampN()    const {return TimeStampN;};
+      const uint32_t         GetTimeStampS()    const {return TimeStampS;};
+      const uint32_t         GetTimeStampN()    const {return TimeStampN;};
+
+      void  SetTimeStampS(uint32_t timeS){TimeStampS = timeS; return;}
+      void  SetTimeStampN(uint32_t timeN){TimeStampN = timeN; return;}
 
       //PixelData::TPC::Onlinemonitor RunOnline(bool SecondPass = false);
 
@@ -48,17 +51,17 @@ namespace PixelData{
       int         Channel;
       std::string ChannelID;
       int         EventNum; 
-      int         TimeStampS; // Time in seconds
-      int         TimeStampN; // Time in nanoseconds
+      uint32_t    TimeStampS; // Time in seconds
+      uint32_t    TimeStampN; // Time in nanoseconds
 
     }; 
-    OnlineMonitor RunOffline(const std::vector<int> &waveform, int Evt, int Chan, std::string ChanID, int Time, bool CalcPeaks = true, bool SecondPass = false, bool verbose = false);
-    OnlineMonitor RunOnline(uint16_t *waveform, int nADC, int Evt, int Chan, std::string ChanID, int Time, bool CalcPeaks = true, bool SecondPass = false, bool verbose = false);
+    OnlineMonitor RunOffline(const std::vector<int> &waveform, int Evt, int Chan, std::string ChanID, bool CalcPeaks = true, bool SecondPass = false, bool verbose = false);
+    OnlineMonitor RunOnline(uint16_t *waveform, int nADC, int Evt, int Chan, std::string ChanID, bool CalcPeaks = true, bool SecondPass = false, bool verbose = false);
     //OnlineMonitor RunOnline(unsigned short *waveform, bool CalcPeaks = true, bool SecondPass = false, bool verbose = false);
 
-    OnlineMonitor RunBaseLine(const std::vector<int> &waveform, int Evt, int Chan, std::string ChanID, int Time, bool verbose = false);
-    OnlineMonitor RunPeaks(const std::vector<int> &waveform, int Evt, int Chan, std::string ChanID, int Time, bool verbose = false);
-    OnlineMonitor RunSecondPass(const std::vector<int> &waveform, int Evt, int Chan, std::string ChanID, int Time, bool verbose = false);
+    OnlineMonitor RunBaseLine(const std::vector<int> &waveform, int Evt, int Chan, std::string ChanID, bool verbose = false);
+    OnlineMonitor RunPeaks(const std::vector<int> &waveform, int Evt, int Chan, std::string ChanID, bool verbose = false);
+    OnlineMonitor RunSecondPass(const std::vector<int> &waveform, int Evt, int Chan, std::string ChanID, bool verbose = false);
   }
 }
 

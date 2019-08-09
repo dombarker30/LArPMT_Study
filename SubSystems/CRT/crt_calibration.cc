@@ -27,7 +27,6 @@
 #include "../DAQDecoder/Event.h"
 
 int main(){
-  std::cout<<"Test"<<std::endl;
   std::ofstream paramsOut ("crt_calibrationOut.txt");
 
   //User depedent parameters

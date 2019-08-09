@@ -1,6 +1,7 @@
 //Decoder Includes        
 #include "../DAQDecoder/Event.h"
 #include "../DAQDecoder/ChannelInfo.h"
+#include "../DAQDecoder/ChannelMap.hh"
 #include "../OnlineAnalysis/OnlineMonitor.hh"
 
 //Root Includes    
@@ -24,9 +25,10 @@ int OnlineMonitorTest(std::string& filename);
 
 int main(int argc, char* argv[]){
 
+
   std::vector<std::string> inputfiles;
   std::vector<std::string> txtfiles;
-
+  
   int c;
 
   //Check to see if a input file is a .root (i) or a .txt file (s) or both 
@@ -118,6 +120,10 @@ int main(int argc, char* argv[]){
   
 int OnlineMonitorTest(std::string& filename){
 
+  std::map<int,std::string> channelMap = DAQ::ChannelMap::InitChannelMap();
+
+  PixelData::OnlineMointoring::OnlineDataBase OnlineDataBase;
+
   //File Inputs
   const char* filechar = filename.c_str();
   TFile *inputfile = new TFile(filechar);
@@ -155,16 +161,18 @@ int OnlineMonitorTest(std::string& filename){
       
       //if (channel->GetChannelNumber()<25 && event->GetEventNumber()==99) {
       //	std::cout<<"Channel: "<<channel->GetChannelNumber()<<std::endl;
-      std::string test = "test";
       auto t1 = std::chrono::high_resolution_clock::now();
-      PixelData::TPC::OnlineMonitor online2 = PixelData::TPC::RunOffline(Waveform,event->GetEventNumber(),channel->GetChannelNumber(),test, event->GetTimeStamp(),true,false,true);
+      
+      std::string channelID = DAQ::ChannelMap::GetChannelID(channel->GetChannelNumber()+1, channelMap);
+      std::cout << " ChannelID: " << channelID << std::endl;
+
+      PixelData::TPC::OnlineMonitor online2;// = PixelData::TPC::RunOffline(Waveform,event->GetEventNumber(),channel->GetChannelNumber(),channelID, event->GetTimeStamp(),true,false,true);
 	auto t2 = std::chrono::high_resolution_clock::now();
 	
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
 	std::cout << "Channel Time taken: " << duration << std::endl;
 
 	//Send to database
-	PixelData::OnlineMointoring::OnlineDataBase OnlineDataBase;
 	int err = OnlineDataBase.SendToDatabase(online2);
 	if(err != 0){std::cout << "failed to send to database" << std::endl;}
 
@@ -192,4 +200,7 @@ int OnlineMonitorTest(std::string& filename){
     std::cout << "Event Time taken: " << duration2 << std::endl;
     
   }
+
+  OnlineDataBase.CloseDataBase();
+
 }

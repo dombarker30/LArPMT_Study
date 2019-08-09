@@ -24,8 +24,17 @@ int main(int argc, char* argv[]) {
     std::vector<std::string> Metrics = {"timestampsecond","timestampnanosecond","channel","channelID","eventnumber","avgpeakheight","maxpeakheight","rms","baseline","numhits"}; 
 
     const char * sql;
-    
-    for(int j=0; j<Metrics.size(); ++j){
+
+    std::string sql_create_table ="CREATE TABLE OnlineParams (timestampsecond long int, timestampnanosecond long int, channel int,  avgpeakheight float, maxpeakheight int, rms float, baseline float, numhits int);";    
+    sql = sql_create_table.c_str();
+    std::cout << sql << std::endl;
+    pqxx::work wp(C);
+    wp.exec(sql);
+    wp.commit();
+    std::cout << "Table created" << std::endl;
+
+
+      for(int j=0; j<Metrics.size(); ++j){
       
       std::string MetricName = Metrics[j];
 

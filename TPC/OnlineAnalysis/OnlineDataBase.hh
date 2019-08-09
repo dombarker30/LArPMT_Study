@@ -17,12 +17,21 @@ namespace PixelData{
 	this->InitaliseDatabase();
       };
       
-      int InitaliseDatabase();
-      int SendToDatabase(PixelData::TPC::OnlineMonitor& online);
+      ~OnlineDataBase(){
+	delete P;
+	delete N; 
+	delete C;
+      }
       
+      int  InitaliseDatabase();
+      int  SendToDatabase(PixelData::TPC::OnlineMonitor& online);
+      int  CloseDataBase();
+      void Complete();
     private:
 
+      pqxx::pipeline* P;
       pqxx::connection* C;
+      pqxx::nontransaction* N;
     };
   }
 }

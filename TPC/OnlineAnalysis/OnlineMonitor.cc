@@ -20,7 +20,7 @@ PixelData::TPC::OnlineMonitor::OnlineMonitor(){
 
 };
 
-PixelData::TPC::OnlineMonitor::OnlineMonitor(int Chan, std::string ChanID, float Base, float RMS, float AvgPeak, float MaxPeak, int MaxTime, int Hits, int Evt, int TimeS, int TimeN){
+PixelData::TPC::OnlineMonitor::OnlineMonitor(int Chan, std::string ChanID, float Base, float RMS, float AvgPeak, float MaxPeak, int MaxTime, int Hits, int Evt, long int TimeS, long int TimeN){
   Channel       = Chan;
   ChannelID     = ChanID;
   Baseline      = Base;
@@ -35,7 +35,8 @@ PixelData::TPC::OnlineMonitor::OnlineMonitor(int Chan, std::string ChanID, float
 };
 
 
-PixelData::TPC::OnlineMonitor::OnlineMonitor(int Chan,std::string ChanID, float Base, float RMS, int Evt, int TimeS, int TimeN){
+
+PixelData::TPC::OnlineMonitor::OnlineMonitor(int Chan,std::string ChanID, float Base, float RMS, int Evt){
   Channel       = Chan;
   ChannelID     = ChanID;
   Baseline      = Base;
@@ -45,25 +46,25 @@ PixelData::TPC::OnlineMonitor::OnlineMonitor(int Chan,std::string ChanID, float 
   MaxPeakTime   = -99999;
   NumHits       = -99999;
   EventNum      = Evt;
-  TimeStampS    = TimeS;
-  TimeStampN    = TimeN;
+  TimeStampS    = 99999;
+  TimeStampN    = 99999;
 
 };
 
 
-PixelData::TPC::OnlineMonitor PixelData::TPC::RunOffline(const std::vector<int> &waveform, int Evt, int Chan, std::string ChanID, int Time, bool CalcPeaks, bool SecondPass, bool verbose){
+PixelData::TPC::OnlineMonitor PixelData::TPC::RunOffline(const std::vector<int> &waveform, int Evt, int Chan, std::string ChanID, bool CalcPeaks, bool SecondPass, bool verbose){
   //std::cout<<"##### Called Offline #####"<<std::endl;
   //auto t1 = std::chrono::high_resolution_clock::now();
 
   OnlineMonitor first; 
   if (CalcPeaks){ 
     if (SecondPass){
-      first = RunSecondPass(waveform, Evt, Chan, ChanID, Time, verbose);
+      first = RunSecondPass(waveform, Evt, Chan, ChanID, verbose);
     } else {
-      first = RunPeaks(waveform, Evt, Chan, ChanID, Time, verbose);
+      first = RunPeaks(waveform, Evt, Chan, ChanID, verbose);
     }
   } else {
-    first = RunBaseLine(waveform, Evt, Chan, ChanID, Time, verbose);
+    first = RunBaseLine(waveform, Evt, Chan, ChanID, verbose);
   }
 
   //auto t2 = std::chrono::high_resolution_clock::now();
@@ -73,12 +74,10 @@ PixelData::TPC::OnlineMonitor PixelData::TPC::RunOffline(const std::vector<int> 
   return first;
 }
 
-PixelData::TPC::OnlineMonitor PixelData::TPC::RunOnline(uint16_t *waveform,int nADC, int Evt, int Chan, std::string ChanID, int Time, bool CalcPeaks, bool SecondPass, bool verbose){
+PixelData::TPC::OnlineMonitor PixelData::TPC::RunOnline(uint16_t *waveform,int nADC, int Evt, int Chan, std::string ChanID, bool CalcPeaks, bool SecondPass, bool verbose){
 //PixelData::TPC::OnlineMonitor PixelData::TPC::RunOnline(unsigned short *waveform, bool CalcPeaks, bool SecondPass, bool verbose){     
-  // std::cout<<"##### Called Online #####"<<std::endl;
-  //auto t1 = std::chrono::high_resolution_clock::now();                         
 
-  //std::cout<<nADC<<std::endl;
+  if(verbose) {std::cout<<"##### Called Online #####"<<std::endl;}
 
   OnlineMonitor first;
   //const int size = sizeof(waveform)/sizeof(waveform[0]);
@@ -88,22 +87,18 @@ PixelData::TPC::OnlineMonitor PixelData::TPC::RunOnline(uint16_t *waveform,int n
 
   if (CalcPeaks){
     if (SecondPass){
-      first = RunSecondPass(waveformV, Evt, Chan, ChanID, Time, verbose);
+      first = RunSecondPass(waveformV, Evt, Chan, ChanID, verbose);
     } else {
-      first = RunPeaks(waveformV, Evt, Chan, ChanID, Time, verbose);
+      first = RunPeaks(waveformV, Evt, Chan, ChanID, verbose);
     }
   } else {
-    first = RunBaseLine(waveformV, Evt, Chan, ChanID, Time, verbose);
   }
-  /*
-  auto t2 = std::chrono::high_resolution_clock::now();                   
-  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();        
-  std::cout<<"Time taken: "<<duration<<std::endl;                              */                    
   return first;
 }
 
 
-PixelData::TPC::OnlineMonitor  PixelData::TPC::RunBaseLine(const std::vector<int> &wfm, int Evt, int Chan, std::string ChanID, int Time, bool fverbose){
+PixelData::TPC::OnlineMonitor  PixelData::TPC::RunBaseLine(const std::vector<int> &wfm, int Evt, int Chan, std::string ChanID,  bool fverbose){
+
   //std::cout<<"Called: "<< wfm.size()<<std::endl;
   TH1F* Ped = new TH1F("PedHist","PedHist",4096,0000,4095);
   for (int i=0;i<wfm.size(); ++i){
@@ -118,12 +113,12 @@ PixelData::TPC::OnlineMonitor  PixelData::TPC::RunBaseLine(const std::vector<int
     std::cout<<"RMS: "<<PedRMS<<std::endl;
   }
 
-  OnlineMonitor online = OnlineMonitor(Chan, ChanID,PedMean,PedRMS,Evt,Time,Time);
+  OnlineMonitor online = OnlineMonitor(Chan, ChanID,PedMean,PedRMS,Evt);
   Ped->Delete();
   return online;
 }
   
-PixelData::TPC::OnlineMonitor  PixelData::TPC::RunPeaks(const std::vector<int> &wfm, int Evt, int Chan, std::string ChanID, int Time, bool fverbose){
+PixelData::TPC::OnlineMonitor  PixelData::TPC::RunPeaks(const std::vector<int> &wfm, int Evt, int Chan, std::string ChanID, bool fverbose){
   // Have many options: Need to test for speed on actual waveforms
   // - Run PedStart then Ped or just use Ped for both
   // - Start the second loop at either 0 or trig
@@ -168,7 +163,7 @@ PixelData::TPC::OnlineMonitor  PixelData::TPC::RunPeaks(const std::vector<int> &
 
   for (int i=trig;i<wfm.size(); ++i){
     //std::cout<<i<<std::endl;
-    if (abs(PedStartMean-wfm.at(i))>(2*PedStartRMS)) // Start Peak
+    if (abs(PedStartMean-wfm.at(i))>(10*PedStartRMS)) // Start Peak
       {
 	isPeak = true;
 	//std::cout<<"Peak at: "<<i<<" with height: "<<wfm.at(i)<<std::endl;
@@ -178,7 +173,7 @@ PixelData::TPC::OnlineMonitor  PixelData::TPC::RunPeaks(const std::vector<int> &
 	  }
       } 
     // End Peak if wfm drops below threshold
-    else if (isPeak && (abs(PedStartMean-wfm.at(i))<(5*PedStartRMS)))
+    else if (isPeak && (abs(PedStartMean-wfm.at(i))<(2*PedStartRMS)))
       {
 	PeakSum  += PeakHeight;  
         PeakCounter++;
@@ -223,8 +218,11 @@ PixelData::TPC::OnlineMonitor  PixelData::TPC::RunPeaks(const std::vector<int> &
 	std::cout<<"NumPeaks: "<<NumPeaks<<std::endl;
       }
   };
+  auto time = std::chrono::high_resolution_clock::now();                        
+  long int TimeS = std::chrono::duration_cast<std::chrono::seconds>(time.time_since_epoch()).count();
+  long int TimeN = std::chrono::duration_cast<std::chrono::seconds>(time.time_since_epoch()).count();
 
-  OnlineMonitor online = OnlineMonitor(Chan, ChanID,PedMean,PedRMS,AvgPeak,MaxPeak,MaxTime,NumPeaks,Evt,Time,Time);
+  OnlineMonitor online = OnlineMonitor(Chan, ChanID,PedMean,PedRMS,AvgPeak,MaxPeak,MaxTime,NumPeaks,Evt,TimeS,TimeN);
 
   Ped->Delete();
 
@@ -234,7 +232,7 @@ PixelData::TPC::OnlineMonitor  PixelData::TPC::RunPeaks(const std::vector<int> &
   return online;
 };
 
-PixelData::TPC::OnlineMonitor  PixelData::TPC::RunSecondPass(const std::vector<int> &wfm, int Evt, int Chan, std::string ChanID, int Time, bool fverbose){
+PixelData::TPC::OnlineMonitor  PixelData::TPC::RunSecondPass(const std::vector<int> &wfm, int Evt, int Chan, std::string ChanID, bool fverbose){
   OnlineMonitor online;
   return online;
 };
