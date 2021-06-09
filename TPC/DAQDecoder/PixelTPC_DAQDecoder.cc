@@ -222,7 +222,7 @@ int MakerootFile(std::string& filename){
       float PedRMS = PedFit->GetParameter(2);
 
       //Do the Second fit to remove affects of possible signal.
-      PedHist->Clear();
+      PedHist->Reset();
       for(int adc_it=0; adc_it<nadc; ++adc_it){
 	if(TMath::Abs(DataChannel[adc_it] - PedMean < 5*PedRMS)){
 	  PedHist->Fill((int)DataChannel[adc_it]);
